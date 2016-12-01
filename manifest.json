@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "IBM Color Picker",
+  "author": "Diego Hernandez",
+  "version": "0.0.1",
+
+  "description": "Google Chrome color picker for IBM brand colors",
+
+  "browser_action": {
+    "default_icon": {
+      "16": "imgs/16x16.gif"
+    },
+    "default_title": "Check for IBM color",
+    "default_popup": "html/popup.html"
+  }
+}
