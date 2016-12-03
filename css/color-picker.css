@@ -1,0 +1,18 @@
+#IBMEyeDropperContainer {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100px;
+  width: 100px;
+  position: absolute;
+  z-index: 100000;
+  top: 0;
+  left: 0;
+  border: 3px solid #FFF;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(40, 40, 40, 0.6), inset 0 0 10px rgba(40, 40, 40, 0.6);
+}
+
+.IBMEyeDropperPixel {
+  box-shadow: 1px 1px 0 rgba(40, 40, 40, 0.6);
+}

@@ -12,5 +12,13 @@
     },
     "default_title": "Check for IBM color",
     "default_popup": "html/popup.html"
-  }
+  },
+  "permissions": ["activeTab"],
+
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["js/color-picker.js"],
+    "css": ["css/color-picker.css"]
+  }]
+
 }
