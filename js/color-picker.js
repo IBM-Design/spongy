@@ -1,4 +1,4 @@
-const LOUPE_PIXELS = 5;
+const LOUPE_PIXELS = 9;
 const loupe = document.createDocumentFragment();
 const loupeContainer = document.createElement('div');
 const loupePixelsArray = [];
@@ -17,7 +17,12 @@ for (let pixelIndex = 0; pixelIndex < LOUPE_PIXELS ** 2; pixelIndex++) {
   loupeContainer.append(pixel);
 }
 
+const colorBox = document.createElement('div');
+colorBox.id = 'IBMEyeDropperColorbox';
+
+
 loupe.append(loupeContainer);
+loupe.append(colorBox);
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.type = 'SCREENSHOT') {
@@ -51,6 +56,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         const colorDataBaseIndex = pixelIndex * 4;
         loupePixelsArray[pixelIndex].style.backgroundColor = `rgba(${color[colorDataBaseIndex]}, ${color[colorDataBaseIndex + 1]}, ${color[colorDataBaseIndex + 2]}, 1)`;
       }
+    });
+
+    document.addEventListener('click', function(event) {
+      const pixelIndex = Math.round((LOUPE_PIXELS ** 2 - 1) / 2);
+      colorBox.style.backgroundColor = loupePixelsArray[pixelIndex].style.backgroundColor;
     });
   }
 });
