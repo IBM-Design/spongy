@@ -3,21 +3,18 @@ const EYE_DROPPER = document.createDocumentFragment();
 const Loupe = {
   // Size of number of pixels to show in Loupe.
   SIZE: 11,
+  PREFIX: 'IBMEyeDropper',
   element: document.createElement('div'),
   pixels: [],
-  PREFIX: 'IBMEyeDropper',
   init: function() {
-    this.createElement();
+    const {element, PREFIX, createPixels} = this;
+    this.element.id = `${this.PREFIX}Container`;
+
+    // Create pixels to fill in container element.
+    this.createPixels();
   },
   render: function () {
     EYE_DROPPER.append(this.element);
-  },
-  createElement: function() {
-    const {element, PREFIX, createPixels} = this;
-    this.element.id = `${this.PREFIX}Container`;
-    
-    // Create pixels to fill in container element.
-    this.createPixels();
   },
   createPixels: function() {
     const {SIZE, PREFIX, pixels, element} = this;
@@ -41,7 +38,8 @@ const Loupe = {
 // Create pixels
 
 const ColorBox = {
-  element: document.createElement('div');
+  element: document.createElement('div'),
+
 };
 const colorBox = document.createElement('div');
 colorBox.id = 'IBMEyeDropperColorbox';

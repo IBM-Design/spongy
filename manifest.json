@@ -8,17 +8,17 @@
 
   "browser_action": {
     "default_icon": {
-      "16": "imgs/16x16.gif"
+      "16": "dist/imgs/16x16.gif"
     },
     "default_title": "Check for IBM color",
-    "default_popup": "html/popup.html"
+    "default_popup": "dist/html/popup.html"
   },
   "permissions": ["activeTab"],
 
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
-    "js": ["js/color-picker.js"],
-    "css": ["css/color-picker.css"]
+    "js": ["dist/scripts/color-picker.js"],
+    "css": ["dist/styles/main.css"]
   }]
 
 }
