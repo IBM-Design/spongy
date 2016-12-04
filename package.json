@@ -1,0 +1,25 @@
+{
+  "name": "ibm-color-picker",
+  "version": "0.0.1",
+  "description": "Google Chrome color picker for IBM brand colors",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.ibm.com:Diego-Hernandez/ibmColorPicker.git"
+  },
+  "keywords": [
+    "ibm",
+    "brand",
+    "colors",
+    "chrome",
+    "extension"
+  ],
+  "author": "Diego Hernandez <diego.hernandez@ibm.com>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "ibm-design-colors": "^1.8.1"
+  }
+}
