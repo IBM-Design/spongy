@@ -1,8 +1,7 @@
 chrome.tabs.query({active: true}, function(tabs) {
   const tab = tabs[0];
-  chrome.tabs.captureVisibleTab(null, function(imageData) {
-    console.log(imageData);
-    chrome.tabs.sendMessage(tab.id, {type: 'SCREENSHOT', imageData});
+  chrome.tabs.captureVisibleTab(null, function(data) {
+    chrome.tabs.sendMessage(tab.id, {type: 'SCREENSHOT', data});
   });
 });
 

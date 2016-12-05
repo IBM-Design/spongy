@@ -17,7 +17,7 @@
 
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
-    "js": ["dist/scripts/color-picker.js"],
+    "js": ["dist/scripts/main.js"],
     "css": ["dist/styles/main.css"]
   }]
 
