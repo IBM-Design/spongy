@@ -30,7 +30,7 @@ const PX_RATIO = window.devicePixelRatio;
  * @type {number} SIZE be an odd number.
  * @public
  */
-const SIZE = 11;
+const SIZE = 5;
 
 export {
   EYE_DROPPER,

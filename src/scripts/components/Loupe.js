@@ -4,6 +4,7 @@ const Loupe = {
   element: document.createElement('div'),
   size: SIZE,
   pixels: [],
+  middleColor: [],
 
   init: function(loupeSize) {
     this.element.id = `${PREFIX}Container`;
@@ -44,15 +45,23 @@ const Loupe = {
     const {pixels, size} = this;
     for (let pixelIndex = 0; pixelIndex < (size * size); pixelIndex++) {
       const colorDataBaseIndex = pixelIndex * 4;
+
+      if (this.isMiddlePixelIndex(pixelIndex)) {
+        this.middleColor = [...colorData.slice(colorDataBaseIndex, colorDataBaseIndex + 3)];
+      }
+
       const newColor = `rgba(${colorData[colorDataBaseIndex]}, ${colorData[colorDataBaseIndex + 1]}, ${colorData[colorDataBaseIndex + 2]}, 1)`;
       pixels[pixelIndex].style.backgroundColor = newColor;
     }
   },
 
+  isMiddlePixelIndex: function(pixelIndex) {
+    const {size} = this;
+    return pixelIndex === Math.round(((size * size) - 1) / 2);
+  },
+
   getMiddlePixelColor: function() {
-    const {size, pixels} = this;
-    const pixelIndex = Math.round(((size * size) - 1) / 2);
-    return pixels[pixelIndex].style.backgroundColor;
+    return this.middleColor;
   }
 };
 
