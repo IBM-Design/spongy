@@ -14,7 +14,7 @@ const Loupe = {
   },
 
   render: function() {
-    EYE_DROPPER.append(this.element);
+    EYE_DROPPER.appendChild(this.element);
   },
 
   createPixels: function() {
@@ -32,7 +32,7 @@ const Loupe = {
       pixels.push(pixel);
 
       // Add to container element.
-      element.append(pixel);
+      element.appendChild(pixel);
     }
   },
 

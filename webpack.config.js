@@ -7,6 +7,7 @@ module.exports = {
   entry: {
     main: path.join(src, 'main.js'),
     popup: path.join(src, 'popup.js'),
+    background: path.join(src, 'background.js'),
   },
   output: {
     path: dist,

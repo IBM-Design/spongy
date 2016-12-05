@@ -26,7 +26,7 @@ const Screenshot = {
     element.height = height();
     element.width = width();
     context.drawImage(image, 0, 0);
-    EYE_DROPPER.append(element);
+    // EYE_DROPPER.appendChild(element);
   },
 
   setData: function(data) {

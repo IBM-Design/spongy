@@ -25,10 +25,10 @@ const ColorBox = {
 
   render: function() {
     const {element, colorElement, ibmColorNameElement, ibmColorToneElement} = this;
-    element.append(colorElement);
-    element.append(ibmColorNameElement);
-    element.append(ibmColorToneElement);
-    EYE_DROPPER.append(this.element);
+    element.appendChild(colorElement);
+    element.appendChild(ibmColorNameElement);
+    element.appendChild(ibmColorToneElement);
+    EYE_DROPPER.appendChild(this.element);
   },
 
   decToHex: function (dec) {

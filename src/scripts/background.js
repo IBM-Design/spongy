@@ -9,4 +9,4 @@ function sendScreenshot() {
   });
 }
 
-sendScreenshot();
+chrome.runtime.onMessage.addListener(sendScreenshot);
