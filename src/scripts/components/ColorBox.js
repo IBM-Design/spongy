@@ -52,7 +52,7 @@ const ColorBox = {
       if (ibmColor.tone >= 30) {
         element.classList.add('inverse');
       } else {
-        element.classList.reverse('inverse');
+        element.classList.remove('inverse');
       }
     } else {
       element.textContent = hexColor;
