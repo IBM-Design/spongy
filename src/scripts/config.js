@@ -1,12 +1,4 @@
 /**
- * DOM fragment that is used to append to body when the extension is activated.
- *
- * @type {DocumentFragment} EYE_DROPPER
- * @public
- */
-const EYE_DROPPER = document.createDocumentFragment();
-
-/**
  * Prefix string that is used for creating extension scoped IDs and classes.
  *
  * @type {string} PREFIX
@@ -32,9 +24,18 @@ const PX_RATIO = window.devicePixelRatio;
  */
 const SIZE = 5;
 
+/**
+ * DOM fragment that is used to append to body when the extension is activated.
+ *
+ * @type {DocumentFragment} EYE_DROPPER
+ * @public
+ */
+const EYE_DROPPER = document.createElement('div');
+EYE_DROPPER.id = PREFIX;
+
 export {
-  EYE_DROPPER,
   PREFIX,
   PX_RATIO,
   SIZE,
+  EYE_DROPPER,
 };

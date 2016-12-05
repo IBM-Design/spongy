@@ -11,6 +11,7 @@ const App = {
     Screenshot.init();
     this.processExtensionMessage = this.processExtensionMessage.bind(this);
     this.moveEyeDropper = this.moveEyeDropper.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.activate = this.activate.bind(this);
     chrome.runtime.onMessage.addListener(this.processExtensionMessage);
   },
@@ -22,6 +23,7 @@ const App = {
         Screenshot.setData(request.data);
         document.addEventListener('mousemove', this.moveEyeDropper);
         document.addEventListener('click', this.readColor);
+        document.addEventListener('keypress', this.handleKeyPress);
         break;
       }
       default: {
@@ -42,19 +44,38 @@ const App = {
     this.isActive = true;
   },
 
+  deactivate: function() {
+    const {body} = document;
+    body.removeChild(EYE_DROPPER);
+    document.removeEventListener('mousemove', this.moveEyeDropper);
+    document.removeEventListener('click', this.readColor);
+    document.removeEventListener('keypress', this.handleKeyPress);
+    this.isActive = false;
+  },
+
   moveEyeDropper: function(event) {
+    console.log('MOVE');
     const {isActive, activate} = this;
-    const {clientX, clientY} = event;
-    const colorData = Screenshot.getColorData(clientX, clientY);
+    const {pageX, pageY} = event;
+    const colorData = Screenshot.getColorData(pageX, pageY);
     if (!isActive) {
       activate();
     }
-    Loupe.move(clientX, clientY, colorData);
+    Loupe.move(pageX, pageY, colorData);
   },
 
   readColor: function () {
+    console.log('READ COLOR');
     const color = Loupe.getMiddlePixelColor();
     ColorBox.recolor(color);
+  },
+
+  handleKeyPress: function (event) {
+    console.log('KEY PRESS');
+    const {which} = event;
+    if (which === 'Q'.charCodeAt(0) || which === 'q'.charCodeAt(0)) {
+      this.deactivate();
+    }
   }
 };
 
