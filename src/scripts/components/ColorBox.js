@@ -1,20 +1,13 @@
 import {PREFIX, EYE_DROPPER} from '../config';
-import * as IBMColors from '../../../node_modules/ibm-design-colors/source/colors';
-
-const colorsMap = new Map();
-for (const colorsObject of IBMColors.palettes) {
-  for (const colorValue of colorsObject.values) {
-    const colorObjectValue = colorValue;
-    colorObjectValue.name = colorsObject.name;
-    colorsMap.set(colorValue.value, colorObjectValue);
-  }
-};
+import Color from '../models/Color';
 
 const ColorBox = {
   element: document.createElement('div'),
   colorElement: document.createElement('span'),
   ibmColorNameElement: document.createElement('span'),
   ibmColorToneElement: document.createElement('span'),
+  color: [0, 0, 0],
+
   init: function() {
     const {element, colorElement, ibmColorNameElement, ibmColorToneElement} = this;
     element.id = `${PREFIX}Colorbox`;
@@ -31,31 +24,30 @@ const ColorBox = {
     EYE_DROPPER.appendChild(this.element);
   },
 
-  decToHex: function (dec) {
-    return `00${dec.toString(16)}`.substr(-2, 2).toLowerCase();
-  },
-
-  recolor: function(color) {
+  recolor: function(colorArrayData) {
+    const color = new Color(colorArrayData);
     const {element, colorElement, ibmColorNameElement, ibmColorToneElement} = this;
-    const hexColorArray = color.map(this.decToHex);
-    const hexColor = `#${hexColorArray.join('')}`;
+    const colorArray = color.toArray();
+    const colorHex = color.toHex();
 
-    console.log(color, hexColorArray, hexColor);
-    element.style.backgroundColor = hexColor;
+    this.color = color;
+    element.style.backgroundColor = colorHex;
 
-    if (colorsMap.has(hexColor)) {
-      const ibmColor = colorsMap.get(hexColor);
-      colorElement.textContent = `#${hexColor}`;
+    if (color.isIbmColor()) {
+      const ibmColor = color.ibmColor;
+      colorElement.textContent = colorHex;
       ibmColorNameElement.textContent = ibmColor.name;
       ibmColorToneElement.textContent = ibmColor.tone;
-
-      if (ibmColor.tone >= 30) {
-        element.classList.add('inverse');
-      } else {
-        element.classList.remove('inverse');
-      }
     } else {
-      element.textContent = hexColor;
+      colorElement.textContent = colorHex;
+      ibmColorNameElement.textContent = '';
+      ibmColorToneElement.textContent = '';
+    }
+
+    if (color.lightness() >= 0.5) {
+      element.classList.remove('inverse');
+    } else {
+      element.classList.add('inverse');
     }
   }
 };

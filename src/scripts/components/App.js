@@ -56,8 +56,8 @@ const App = {
 
   removeUI: function() {
     const {body} = document;
-    body.style.cursor = 'default';
-    body.style.pointerEvents = 'auto';
+    body.style.cursor = null;
+    body.style.pointerEvents = null;
 
     if (document.getElementById(PREFIX)) {
       body.removeChild(EYE_DROPPER);
