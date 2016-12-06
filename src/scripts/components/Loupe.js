@@ -26,7 +26,12 @@ const Loupe = {
       pixel.style.width = `${100 / size}%`;
       pixel.style.height = `${100 / size}%`;
       // Make every new pixel lower in z-index so that the pixel divider shadows will show.
-      pixel.style.zIndex = size - pixelIndex + 1;
+      if (this.isMiddlePixelIndex(pixelIndex)) {
+        pixel.style.zIndex = size + 2;
+        pixel.classList.add('middle');
+      } else {
+        pixel.style.zIndex = size - pixelIndex + 1;
+      }
 
       // Cache pixels to recolor later.
       pixels.push(pixel);
@@ -47,7 +52,7 @@ const Loupe = {
       const colorDataBaseIndex = pixelIndex * 4;
 
       if (this.isMiddlePixelIndex(pixelIndex)) {
-        this.middleColor = [...colorData.slice(colorDataBaseIndex, colorDataBaseIndex + 3)];
+        this.middleColor = colorData.slice(colorDataBaseIndex, colorDataBaseIndex + 3);
       }
 
       const newColor = `rgba(${colorData[colorDataBaseIndex]}, ${colorData[colorDataBaseIndex + 1]}, ${colorData[colorDataBaseIndex + 2]}, 1)`;
