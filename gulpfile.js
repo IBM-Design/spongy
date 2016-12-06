@@ -46,14 +46,14 @@ gulp.task('scripts', () => {
 
 // Sass build task
 gulp.task('styles', () => {
-  return gulp.src(`${paths.src.styles}/main.scss`)
+  return gulp.src(`${paths.src.styles}/*.scss`)
     .pipe(sass())
     .pipe(gulp.dest(paths.dist.styles));
 });
 
-gulp.task('default', ['html', 'imgs', 'scripts', 'styles']);
+gulp.task('build', ['html', 'imgs', 'scripts', 'styles']);
 
-gulp.task('watch', ['default'], () => {
+gulp.task('default', ['build'], () => {
   gulp.watch(`${paths.src.html}/**/*.html`, ['html']);
   gulp.watch(`${paths.src.imgs}/**/*`, ['imgs']);
   gulp.watch(`${paths.src.scripts}/**/*.js`, ['scripts']);

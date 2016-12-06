@@ -24,7 +24,7 @@ const App = {
         Screenshot.setData(request.data);
         document.addEventListener('mousemove', this.moveEyeDropper);
         document.addEventListener('click', this.readColor);
-        document.addEventListener('keypress', this.handleKeyPress);
+        document.addEventListener('keyup', this.handleKeyPress);
         document.addEventListener('scroll', this.handleViewChange);
         window.addEventListener('resize', this.handleViewChange);
         break;
@@ -47,7 +47,7 @@ const App = {
   deactivate: function() {
     document.removeEventListener('mousemove', this.moveEyeDropper);
     document.removeEventListener('click', this.readColor);
-    document.removeEventListener('keypress', this.handleKeyPress);
+    document.removeEventListener('keyup', this.handleKeyPress);
     document.removeEventListener('scroll', this.handleViewChange);
     window.removeEventListener('resize', this.handleViewChange);
     this.removeUI();
@@ -92,7 +92,7 @@ const App = {
 
   handleKeyPress: function (event) {
     const {which} = event;
-    if (which === 'Q'.charCodeAt(0) || which === 'q'.charCodeAt(0)) {
+    if (which === 27) {
       this.deactivate();
     }
   },
