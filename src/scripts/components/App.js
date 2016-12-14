@@ -5,7 +5,6 @@ import ColorBox from './ColorBox';
 import Screenshot from './Screenshot';
 
 const App = {
-  isActive: false,
   init: function () {
     Loupe.init();
     ColorBox.init();
@@ -22,11 +21,7 @@ const App = {
     switch (request.type) {
       case MESSAGE_TYPES.SCREENSHOT_DATA: {
         Screenshot.setData(request.data);
-        document.addEventListener('mousemove', this.moveEyeDropper);
-        document.addEventListener('click', this.readColor);
-        document.addEventListener('keyup', this.handleKeyPress);
-        document.addEventListener('scroll', this.handleViewChange);
-        window.addEventListener('resize', this.handleViewChange);
+        this.activate();
         break;
       }
       default: {
@@ -36,12 +31,17 @@ const App = {
   },
 
   activate: function() {
+    document.addEventListener('mousemove', this.moveEyeDropper);
+    document.addEventListener('click', this.readColor);
+    document.addEventListener('keyup', this.handleKeyPress);
+    document.addEventListener('scroll', this.handleViewChange);
+    window.addEventListener('resize', this.handleViewChange);
+
     Loupe.render();
     ColorBox.render();
     Screenshot.render();
 
     this.appendUI();
-    this.isActive = true;
   },
 
   deactivate: function() {
@@ -51,7 +51,14 @@ const App = {
     document.removeEventListener('scroll', this.handleViewChange);
     window.removeEventListener('resize', this.handleViewChange);
     this.removeUI();
-    this.isActive = false;
+  },
+
+  refresh: function () {
+    this.removeUI();
+    chrome.runtime.sendMessage(null, {type: MESSAGE_TYPES.SCREENSHOT_REQUEST}, () => {
+      Screenshot.render();
+      this.appendUI();
+    });
   },
 
   removeUI: function() {
@@ -73,15 +80,11 @@ const App = {
   },
 
   moveEyeDropper: function(event) {
-    const {isActive, activate} = this;
     const {pageX, pageY} = event;
     const {scrollTop, scrollLeft} = document.body;
     const x = pageX - scrollLeft;
     const y = pageY - scrollTop;
     const colorData = Screenshot.getColorData(x, y);
-    if (!isActive) {
-      activate();
-    }
     Loupe.move(pageX, pageY, colorData);
   },
 
@@ -92,17 +95,24 @@ const App = {
 
   handleKeyPress: function (event) {
     const {which} = event;
-    if (which === 27) {
-      this.deactivate();
+    event.preventDefault();
+    switch (which) {
+      // Deactivate extension with <esc> key
+      case 27:
+        this.deactivate();
+        break;
+
+      // Reload extension with <R> key
+      case 82:
+        this.refresh();
+        break;
+      default:
     }
+    // event.preventDefault();
   },
 
   handleViewChange: function() {
-    this.removeUI();
-    chrome.runtime.sendMessage(null, {type: MESSAGE_TYPES.SCREENSHOT_REQUEST}, () => {
-      Screenshot.render();
-      this.appendUI();
-    });
+    this.refresh();
   }
 };
 

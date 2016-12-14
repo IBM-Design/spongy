@@ -1,6 +1,6 @@
 import * as IBMColors from '../../../node_modules/ibm-design-colors/source/colors';
 
-const VARIANCE = 2;
+const VARIANCE = 10;
 
 function hexColorToRgb(hexColor) {
   const red = parseInt(hexColor.substr(1, 2), 16);
