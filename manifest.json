@@ -1,16 +1,16 @@
 {
   "manifest_version": 2,
-  "name": "IBM Color Picker",
+  "name": "Spongy",
   "author": "Diego Hernandez",
-  "version": "0.0.1",
+  "version": "0.0.2",
 
-  "description": "Google Chrome color picker for IBM brand colors",
+  "description": "Google Chrome color picker for brand colors and grades",
 
   "browser_action": {
     "default_icon": {
       "16": "dist/imgs/16x16.gif"
     },
-    "default_title": "Check for IBM color",
+    "default_title": "Check for brand colors",
     "default_popup": "dist/html/popup.html"
   },
   "permissions": ["activeTab"],

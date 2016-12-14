@@ -1,7 +1,7 @@
 {
-  "name": "ibm-color-picker",
-  "version": "0.0.1",
-  "description": "Google Chrome color picker for IBM brand colors",
+  "name": "spongy",
+  "version": "0.0.2",
+  "description": "Google Chrome color picker for brand colors and grades",
   "main": "index.js",
   "scripts": {
     "start": "gulp",
@@ -9,19 +9,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.ibm.com:Diego-Hernandez/ibmColorPicker.git"
+    "url": "git@github.com:IBM-Design/spongy.git"
   },
   "keywords": [
-    "ibm",
     "brand",
     "colors",
     "chrome",
-    "extension"
+    "extension",
+    "eye dropper"
   ],
   "author": "Diego Hernandez <diego.hernandez@ibm.com>",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/IBM-Design/spongy/issues"
+  },
   "dependencies": {
-    "ibm-design-colors": "^1.8.1"
+    "ibm-design-colors": "^2.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",

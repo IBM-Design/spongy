@@ -3,19 +3,19 @@ import * as IBMColors from '../../../node_modules/ibm-design-colors/source/color
 const VARIANCE = 10;
 
 function hexColorToRgb(hexColor) {
-  const red = parseInt(hexColor.substr(1, 2), 16);
-  const green = parseInt(hexColor.substr(3, 2), 16);
-  const blue = parseInt(hexColor.substr(5, 2), 16);
+  const red = parseInt(hexColor.substr(0, 2), 16);
+  const green = parseInt(hexColor.substr(2, 2), 16);
+  const blue = parseInt(hexColor.substr(4, 2), 16);
   return [red, green, blue];
 }
 
 const ibmColorsArray = [];
 for (const colorsObject of IBMColors.palettes) {
   for (const colorValue of colorsObject.values) {
-    const {tone, value} = colorValue;
+    const {grade, value} = colorValue;
     const colorObjectValue = {
-      tone,
-      hex: value,
+      grade,
+      hex: `#${value}`,
       rgb: hexColorToRgb(value),
       name: colorsObject.name,
     }

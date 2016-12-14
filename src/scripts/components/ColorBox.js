@@ -37,7 +37,7 @@ const ColorBox = {
       const ibmColor = color.ibmColor;
       colorElement.textContent = colorHex;
       ibmColorNameElement.textContent = ibmColor.name;
-      ibmColorToneElement.textContent = ibmColor.tone;
+      ibmColorToneElement.textContent = ibmColor.grade;
     } else {
       colorElement.textContent = colorHex;
       ibmColorNameElement.textContent = '';
