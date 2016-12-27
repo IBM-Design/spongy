@@ -1,5 +1,5 @@
 import {PREFIX, EYE_DROPPER} from '../config';
-import Color from '../models/Color';
+import {rgbColorToHex, colorContrast, getMatchingIbmColor} from '../utils/color';
 
 const ColorBox = {
   element: document.createElement('div'),
@@ -25,26 +25,25 @@ const ColorBox = {
   },
 
   recolor: function(colorArrayData) {
-    const color = new Color(colorArrayData);
     const {element, colorElement, ibmColorNameElement, ibmColorToneElement} = this;
-    const colorArray = color.toArray();
-    const colorHex = color.toHex();
+    const colorArray = Array.from(colorArrayData);
+    const colorHex = rgbColorToHex(colorArray);
+    const matchingIbmColor = getMatchingIbmColor(colorArray);
 
-    this.color = color;
+    this.color = colorArray;
     element.style.backgroundColor = colorHex;
 
-    if (color.isIbmColor()) {
-      const ibmColor = color.ibmColor;
+    if (matchingIbmColor) {
       colorElement.textContent = colorHex;
-      ibmColorNameElement.textContent = ibmColor.name;
-      ibmColorToneElement.textContent = ibmColor.grade;
+      ibmColorNameElement.textContent = matchingIbmColor.name;
+      ibmColorToneElement.textContent = matchingIbmColor.grade;
     } else {
       colorElement.textContent = colorHex;
       ibmColorNameElement.textContent = '';
       ibmColorToneElement.textContent = '';
     }
 
-    if (color.lightness() >= 0.5) {
+    if (colorContrast(colorHex, '#FFFFFF') < 3) {
       element.classList.remove('inverse');
     } else {
       element.classList.add('inverse');
