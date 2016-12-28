@@ -57,19 +57,24 @@ describe('utils.color', () => {
 
   describe('#matchScore', () => {
     const color = [255, 255, 255];
+
+    function roundToHundreds(number){
+      return Math.round(number * 100) / 100;
+    }
+
     it('should return 0.00', () => {
       const testColor = [0, 0, 0];
-      assert.strictEqual(matchScore(color, testColor), 0.00);
+      assert.strictEqual(roundToHundreds(matchScore(color, testColor)), 0.00);
     });
 
     it('should return 0.36', () => {
       const testColor = [44, 79, 155];
-      assert.strictEqual(matchScore(color, testColor), 0.36);
+      assert.strictEqual(roundToHundreds(matchScore(color, testColor)), 0.36);
     });
 
     it('should return 0.90', () => {
       const testColor = [225, 228, 234];
-      assert.strictEqual(matchScore(color, testColor), 0.90);
+      assert.strictEqual(roundToHundreds(matchScore(color, testColor)), 0.90);
     });
   });
 
@@ -92,7 +97,7 @@ describe('utils.color', () => {
     });
 
     it('should return confident magenta 40', () => {
-      const color = getMatchingIbmColor([230, 89, 165], confidenceThreshold);
+      const color = getMatchingIbmColor([230, 86, 165], confidenceThreshold);
       assert.deepEqual(color, {grade: '40', name: 'magenta', hex: '#ff509e', rgb: [255, 80, 158]});
     });
 

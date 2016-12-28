@@ -137,9 +137,8 @@ function matchScore(colorOneRgbArray, colorTwoRgbArray) {
   const rawScore = colorOneRgbArray.reduce((score, channel, channelIndex) => {
     return score += Math.abs(channel - colorTwoRgbArray[channelIndex]);
   }, 0);
-  const scoreFloat = 1 - (rawScore / (255 * 3));
 
-  return Math.round(scoreFloat * 100) / 100;
+  return 1 - (rawScore / (255 * 3));
 }
 
 
