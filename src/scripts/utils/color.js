@@ -126,31 +126,20 @@ function colorContrast(colorOne, colorTwo) {
 
 
 /**
- * Generate an inverse matching score based on how far apart two colors are. The lower the number the more closely the
- * colors will resemble each other.
+ * Generate a score based on how closely two colors match from scale of 0 to 1. 1 means an exact match.
  *
  * @param {number[]} colorOneRgbArray Color to test to match.
  * @param {number[]} colorTwoRgbArray Color to test to match.
- * @returns {number} The inverse resemblance matching color score.
+ * @returns {number} Score from 0 to 1 of how closely two colors match.
  * @public
  */
 function matchScore(colorOneRgbArray, colorTwoRgbArray) {
-  return colorOneRgbArray.reduce((score, channel, channelIndex) => {
+  const rawScore = colorOneRgbArray.reduce((score, channel, channelIndex) => {
     return score += Math.abs(channel - colorTwoRgbArray[channelIndex]);
   }, 0);
-}
+  const scoreFloat = 1 - (rawScore / (255 * 3));
 
-
-/**
- * This function will return if the color matches a brand color by a higher percentage than the confidence threshold.
- *
- * @param {number} score The match score to be evaluated for its closeness to a given brand color.
- * @param {number} confidenceThreshold On a scale from 0 to 1 what is the confidence threshold required for a score to
- * be confident. 0 beign least confident and 1 being most confident.
- * @returns {boolean} Whether or not the color matches a brand color at a higher percentage than the confident threshold.
- */
-function isMatchConfident(score, confidenceThreshold) {
-  return (1 - (score / (255 * 3))) >= confidenceThreshold;
+  return Math.round(scoreFloat * 100) / 100;
 }
 
 
@@ -163,26 +152,18 @@ function isMatchConfident(score, confidenceThreshold) {
  */
 function getMatchingIbmColor(rgbColorArray, confidenceThreshold) {
   // Instantiate result and current match score variables.
-  let result;
+  let result = null;
   let currentMatchScore = -1;
 
+  // Iterate over brand colors.
   for (const ibmColor of ibmColorsArray) {
-    const ibmColorRgb = ibmColor.rgb;
+    const score = matchScore(rgbColorArray, ibmColor.rgb);
 
-    // If there is an existing current match score select the matched color with the lowest score (closest match).
-    if (currentMatchScore > -1) {
-      const score = matchScore(rgbColorArray, ibmColorRgb);
-
-      if (score < currentMatchScore) {
-        result = ibmColor;
-        // Add confidence percentage to result.
-        currentMatchScore = score;
-        result.isConfident = isMatchConfident(currentMatchScore, confidenceThreshold);
-      }
-    } else {
-      currentMatchScore = matchScore(rgbColorArray, ibmColorRgb);
+    // If score is higher than current match score and it passes the confidence threshold then set the current match to
+    // this brand color.
+    if ((score > currentMatchScore) && (score >= confidenceThreshold)) {
       result = ibmColor;
-      result.isConfident = isMatchConfident(currentMatchScore, confidenceThreshold);
+      currentMatchScore = score;
     }
   }
 

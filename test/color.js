@@ -57,42 +57,48 @@ describe('utils.color', () => {
 
   describe('#matchScore', () => {
     const color = [255, 255, 255];
-    it('should return 765', () => {
+    it('should return 0.00', () => {
       const testColor = [0, 0, 0];
-      assert.strictEqual(matchScore(color, testColor), 765);
+      assert.strictEqual(matchScore(color, testColor), 0.00);
     });
 
-    it('should return 487', () => {
+    it('should return 0.36', () => {
       const testColor = [44, 79, 155];
-      assert.strictEqual(matchScore(color, testColor), 487);
+      assert.strictEqual(matchScore(color, testColor), 0.36);
     });
 
-    it('should return 78', () => {
+    it('should return 0.90', () => {
       const testColor = [225, 228, 234];
-      assert.strictEqual(matchScore(color, testColor), 78);
+      assert.strictEqual(matchScore(color, testColor), 0.90);
     });
   });
 
   describe('#getMatchingIbmColor', () => {
     const confidenceThreshold = 0.95;
+
     it('should return confident aqua 40', () => {
       const color = getMatchingIbmColor([18, 163, 180], confidenceThreshold);
-      assert.deepEqual(color, {grade: '40', name: 'aqua', hex: '#12a3b4', rgb: [18, 163, 180], isConfident: true});
+      assert.deepEqual(color, {grade: '40', name: 'aqua', hex: '#12a3b4', rgb: [18, 163, 180]});
     });
 
     it('should return confident aqua 90', () => {
       const color = getMatchingIbmColor([18, 42, 46], confidenceThreshold);
-      assert.deepEqual(color, {grade: '90', name: 'aqua', hex: '#122a2e', rgb: [18, 42, 46], isConfident: true});
+      assert.deepEqual(color, {grade: '90', name: 'aqua', hex: '#122a2e', rgb: [18, 42, 46]});
     });
 
     it('should return confident yellow 10', () => {
       const color = getMatchingIbmColor([253, 214, 0], confidenceThreshold);
-      assert.deepEqual(color, {grade: '10', name: 'yellow', hex: '#fed500', rgb: [254, 213, 0], isConfident: true});
+      assert.deepEqual(color, {grade: '10', name: 'yellow', hex: '#fed500', rgb: [254, 213, 0]});
     });
 
-    it('should return not confident lime 30', () => {
+    it('should return confident magenta 40', () => {
+      const color = getMatchingIbmColor([230, 89, 165], confidenceThreshold);
+      assert.deepEqual(color, {grade: '40', name: 'magenta', hex: '#ff509e', rgb: [255, 80, 158]});
+    });
+
+    it('should return null', () => {
       const color = getMatchingIbmColor([124, 205, 15], confidenceThreshold);
-      assert.deepEqual(color, {grade: '30', name: 'lime', hex: '#81b532', rgb: [129, 181, 50], isConfident: false});
+      assert.strictEqual(color, null);
     });
   });
 });

@@ -34,13 +34,12 @@ const ColorBox = {
     element.style.backgroundColor = colorHex;
 
     if (matchingIbmColor) {
-      const prefix = matchingIbmColor.isConfident ? '⨻' :'';
       colorElement.textContent = colorHex;
-      ibmColorNameElement.textContent = `${prefix} ${matchingIbmColor.name}`;
+      ibmColorNameElement.textContent = matchingIbmColor.name;
       ibmColorGradeElement.textContent = matchingIbmColor.grade;
     } else {
       colorElement.textContent = colorHex;
-      ibmColorNameElement.textContent = '';
+      ibmColorNameElement.textContent = 'No matching color';
       ibmColorGradeElement.textContent = '';
     }
 
