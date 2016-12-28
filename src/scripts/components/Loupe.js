@@ -42,7 +42,11 @@ const Loupe = {
   },
 
   move: function(x, y, colorData)  {
-    this.element.style.transform = `translate(${x + 4}px, ${y + 4}px)`;
+    const spacing = 100;
+    const {innerWidth, innerHeight} = window;
+    const xOffset = (x + spacing) >= innerWidth ? -spacing : 0;
+    const yOffset = (y + spacing) >= innerHeight ? -spacing : 0;
+    this.element.style.transform = `translate(${xOffset + x + 4}px, ${yOffset + y + 4}px)`;
     this.colorPixels(colorData);
   },
 
