@@ -1,50 +1,49 @@
 import {PREFIX, EYE_DROPPER} from '../config';
-import Color from '../models/Color';
+import {rgbColorToHex, colorContrast, getMatchingIbmColor} from '../utils/color';
 
 const ColorBox = {
   element: document.createElement('div'),
   colorElement: document.createElement('span'),
   ibmColorNameElement: document.createElement('span'),
-  ibmColorToneElement: document.createElement('span'),
+  ibmColorGradeElement: document.createElement('span'),
   color: [0, 0, 0],
 
   init: function() {
-    const {element, colorElement, ibmColorNameElement, ibmColorToneElement} = this;
+    const {element, colorElement, ibmColorNameElement, ibmColorGradeElement} = this;
     element.id = `${PREFIX}Colorbox`;
     colorElement.id = `${PREFIX}ColorText`;
     ibmColorNameElement.id = `${PREFIX}NameText`;
-    ibmColorToneElement.id = `${PREFIX}ToneText`;
+    ibmColorGradeElement.id = `${PREFIX}GradeText`;
   },
 
   render: function() {
-    const {element, colorElement, ibmColorNameElement, ibmColorToneElement} = this;
+    const {element, colorElement, ibmColorNameElement, ibmColorGradeElement} = this;
     element.appendChild(colorElement);
     element.appendChild(ibmColorNameElement);
-    element.appendChild(ibmColorToneElement);
+    element.appendChild(ibmColorGradeElement);
     EYE_DROPPER.appendChild(this.element);
   },
 
   recolor: function(colorArrayData) {
-    const color = new Color(colorArrayData);
-    const {element, colorElement, ibmColorNameElement, ibmColorToneElement} = this;
-    const colorArray = color.toArray();
-    const colorHex = color.toHex();
+    const {element, colorElement, ibmColorNameElement, ibmColorGradeElement} = this;
+    const colorArray = Array.from(colorArrayData);
+    const colorHex = rgbColorToHex(colorArray);
+    const matchingIbmColor = getMatchingIbmColor(colorArray, 0.95);
 
-    this.color = color;
+    this.color = colorArray;
     element.style.backgroundColor = colorHex;
 
-    if (color.isIbmColor()) {
-      const ibmColor = color.ibmColor;
+    if (matchingIbmColor) {
       colorElement.textContent = colorHex;
-      ibmColorNameElement.textContent = ibmColor.name;
-      ibmColorToneElement.textContent = ibmColor.grade;
+      ibmColorNameElement.textContent = matchingIbmColor.name;
+      ibmColorGradeElement.textContent = matchingIbmColor.grade;
     } else {
       colorElement.textContent = colorHex;
-      ibmColorNameElement.textContent = '';
-      ibmColorToneElement.textContent = '';
+      ibmColorNameElement.textContent = 'No matching color';
+      ibmColorGradeElement.textContent = '';
     }
 
-    if (color.lightness() >= 0.5) {
+    if (colorContrast(colorHex, '#FFFFFF') < 3) {
       element.classList.remove('inverse');
     } else {
       element.classList.add('inverse');
