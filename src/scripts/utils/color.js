@@ -5,6 +5,7 @@ import * as IBMColors from '../../../node_modules/ibm-design-colors/source/color
  *
  * @param {string} hexColor String of color value in hexadecimal format.
  * @returns {number[]} Array of red, green, blue values of hexadecimal color.
+ * @public
  */
 function hexColorToRgb(hexColor) {
   // Set offset of hex color string if it starts with a #
@@ -23,6 +24,7 @@ function hexColorToRgb(hexColor) {
  *
  * @param {number[]} rgbColor Array of red, green, blue values of color to be converted.
  * @returns {string} String of color value in hexadecimal format.
+ * @public
  */
 function rgbColorToHex(rgbColor) {
   // Generate hexadecimal value for each color channel.
@@ -93,6 +95,7 @@ function relativeLuminance(color) {
   return (0.2126 * R)+ (0.7152 * G) + (0.0722 * B);
 }
 
+
 /**
  * Get contrast ratio of two colors.
  *
@@ -121,6 +124,72 @@ function colorContrast(colorOne, colorTwo) {
   return Math.round(rawRatio * 10) / 10;
 }
 
+
+/**
+ * Generate an inverse matching score based on how far apart two colors are. The lower the number the more closely the
+ * colors will resemble each other.
+ *
+ * @param {number[]} colorOneRgbArray Color to test to match.
+ * @param {number[]} colorTwoRgbArray Color to test to match.
+ * @returns {number} The inverse resemblance matching color score.
+ * @public
+ */
+function matchScore(colorOneRgbArray, colorTwoRgbArray) {
+  return colorOneRgbArray.reduce((score, channel, channelIndex) => {
+    return score += Math.abs(channel - colorTwoRgbArray[channelIndex]);
+  }, 0);
+}
+
+
+/**
+ * This function will return if the color matches a brand color by a higher percentage than the confidence threshold.
+ *
+ * @param {number} score The match score to be evaluated for its closeness to a given brand color.
+ * @param {number} confidenceThreshold On a scale from 0 to 1 what is the confidence threshold required for a score to
+ * be confident. 0 beign least confident and 1 being most confident.
+ * @returns {boolean} Whether or not the color matches a brand color at a higher percentage than the confident threshold.
+ */
+function isMatchConfident(score, confidenceThreshold) {
+  return (1 - (score / (255 * 3))) >= confidenceThreshold;
+}
+
+
+/**
+ * Get IBM color match of color RGB array.
+ *
+ * @param {number[]} rgbColorArray Array of red, green, blue values of color to be matched.
+ * @returns {object|boolean} The IBM color object.
+ * @public
+ */
+function getMatchingIbmColor(rgbColorArray, confidenceThreshold) {
+  // Instantiate result and current match score variables.
+  let result;
+  let currentMatchScore = -1;
+
+  for (const ibmColor of ibmColorsArray) {
+    const ibmColorRgb = ibmColor.rgb;
+
+    // If there is an existing current match score select the matched color with the lowest score (closest match).
+    if (currentMatchScore > -1) {
+      const score = matchScore(rgbColorArray, ibmColorRgb);
+
+      if (score < currentMatchScore) {
+        result = ibmColor;
+        // Add confidence percentage to result.
+        currentMatchScore = score;
+        result.isConfident = isMatchConfident(currentMatchScore, confidenceThreshold);
+      }
+    } else {
+      currentMatchScore = matchScore(rgbColorArray, ibmColorRgb);
+      result = ibmColor;
+      result.isConfident = isMatchConfident(currentMatchScore, confidenceThreshold);
+    }
+  }
+
+  return result;
+}
+
+
 const ibmColorsArray = [];
 // Get all of the IBM colors in an array that is easier to search through.
 for (const colorsObject of IBMColors.palettes) {
@@ -136,35 +205,12 @@ for (const colorsObject of IBMColors.palettes) {
     ibmColorsArray.push(colorObjectValue);
   }
 };
-/**
- * Get IBM color match of color RGB array.
- *
- * @param {number[]} rgbColorArray Array of red, green, blue values of color to be matched.
- * @returns {object|boolean} The IBM color object.
- */
-function getMatchingIbmColor(rgbColorArray) {
-  // The range ammount of variance allowed to in order to match a given brand color.
-  const VARIANCE = 10;
 
-  for (const ibmColor of ibmColorsArray) {
-    const ibmColorRgb = ibmColor.rgb;
-    const redMatch = (rgbColorArray[0] <= (ibmColorRgb[0] + VARIANCE)) && (rgbColorArray[0] >= (ibmColorRgb[0] - VARIANCE));
-    const greenMatch = (rgbColorArray[1] <= (ibmColorRgb[1] + VARIANCE)) && (rgbColorArray[1] >= (ibmColorRgb[1] - VARIANCE));
-    const blueMatch = (rgbColorArray[2] <= (ibmColorRgb[2] + VARIANCE)) && (rgbColorArray[2] >= (ibmColorRgb[2] - VARIANCE));
-    if (redMatch && greenMatch && blueMatch) {
-      return ibmColor;
-    }
-  }
-
-  return null;
-}
 
 export {
   hexColorToRgb,
   rgbColorToHex,
-  lightness,
-  normalizeGamma,
-  relativeLuminance,
   colorContrast,
+  matchScore,
   getMatchingIbmColor,
 };
