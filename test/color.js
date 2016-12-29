@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {hexColorToRgb, rgbColorToHex, colorContrast, matchScore, getMatchingIbmColor} from '../src/scripts/utils/color';
+import {hexColorToRgb, rgbColorToHex, colorContrast, matchScore, getMatchingBrandColor, rgbColorStringToArray} from '../src/scripts/utils/color';
 
 
 describe('utils.color', () => {
@@ -82,28 +82,38 @@ describe('utils.color', () => {
     const confidenceThreshold = 0.95;
 
     it('should return confident aqua 40', () => {
-      const color = getMatchingIbmColor([18, 163, 180], confidenceThreshold);
+      const color = getMatchingBrandColor([18, 163, 180], confidenceThreshold);
       assert.deepEqual(color, {grade: '40', name: 'aqua', hex: '#12a3b4', rgb: [18, 163, 180]});
     });
 
     it('should return confident aqua 90', () => {
-      const color = getMatchingIbmColor([18, 42, 46], confidenceThreshold);
+      const color = getMatchingBrandColor([18, 42, 46], confidenceThreshold);
       assert.deepEqual(color, {grade: '90', name: 'aqua', hex: '#122a2e', rgb: [18, 42, 46]});
     });
 
     it('should return confident yellow 10', () => {
-      const color = getMatchingIbmColor([253, 214, 0], confidenceThreshold);
+      const color = getMatchingBrandColor([253, 214, 0], confidenceThreshold);
       assert.deepEqual(color, {grade: '10', name: 'yellow', hex: '#fed500', rgb: [254, 213, 0]});
     });
 
     it('should return confident magenta 40', () => {
-      const color = getMatchingIbmColor([230, 86, 165], confidenceThreshold);
+      const color = getMatchingBrandColor([230, 86, 165], confidenceThreshold);
       assert.deepEqual(color, {grade: '40', name: 'magenta', hex: '#ff509e', rgb: [255, 80, 158]});
     });
 
     it('should return null', () => {
-      const color = getMatchingIbmColor([124, 205, 15], confidenceThreshold);
+      const color = getMatchingBrandColor([124, 205, 15], confidenceThreshold);
       assert.strictEqual(color, null);
     });
   });
+
+  describe('#rgbColorStringToArray', () => {
+    it('should return [12, 0, 250]', () => {
+      assert.deepEqual(rgbColorStringToArray('rgb(12, 0, 250)'), [12, 0, 250]);
+    });
+
+    it('should return [12, 0, 250]', () => {
+      assert.deepEqual(rgbColorStringToArray('rgb(12,0,250)'), [12, 0, 250]);
+    });
+  })
 });

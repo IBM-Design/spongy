@@ -4,7 +4,7 @@ import * as IBMColors from '../../../node_modules/ibm-design-colors/source/color
  * Turn a hexadecimal color value into an array of red, green, blue values in base 10.
  *
  * @param {string} hexColor String of color value in hexadecimal format.
- * @returns {number[]} Array of red, green, blue values of hexadecimal color.
+ * @returns {number[]} Array of red, green, blue values of color.
  * @public
  */
 function hexColorToRgb(hexColor) {
@@ -14,6 +14,23 @@ function hexColorToRgb(hexColor) {
   const red = parseInt(hexColor.substr((0 + offset), 2), 16);
   const green = parseInt(hexColor.substr((2 + offset), 2), 16);
   const blue = parseInt(hexColor.substr((4 + offset), 2), 16);
+
+  return [red, green, blue];
+}
+
+
+/**
+ * Turn an RGB CSS color function string into an RGB array.
+ *
+ * @param {string} rgbColorString of color value in hexadecimal format.
+ * @returns {number[]} Array of red, green, blue values of color.
+ * @public
+ */
+function rgbColorStringToArray(rgbColorString) {
+  const rgbColorArray = rgbColorString.match(/\((\d{1,3}),\s?(\d{1,3}),\s?(\d{1,3})\)/);
+  const red = parseInt(rgbColorArray[1]);
+  const green = parseInt(rgbColorArray[2]);
+  const blue = parseInt(rgbColorArray[3]);
 
   return [red, green, blue];
 }
@@ -124,6 +141,16 @@ function colorContrast(colorOne, colorTwo) {
   return Math.round(rawRatio * 10) / 10;
 }
 
+/**
+ * Get the appropriate text color of an element based on the background color to maximize color contrast and readbility.
+ *
+ * @param {string} hexBackgroundColor Background color value in hexadecimal format.
+ * @public
+ */
+function getVisibleTextColor(hexBackgroundColor) {
+  return colorContrast(hexBackgroundColor, '#FFFFFF') > 3 ? '#FFFFFF' : '#000000';
+}
+
 
 /**
  * Generate a score based on how closely two colors match from scale of 0 to 1. 1 means an exact match.
@@ -149,13 +176,13 @@ function matchScore(colorOneRgbArray, colorTwoRgbArray) {
  * @returns {object|boolean} The IBM color object.
  * @public
  */
-function getMatchingIbmColor(rgbColorArray, confidenceThreshold) {
+function getMatchingBrandColor(rgbColorArray, confidenceThreshold) {
   // Instantiate result and current match score variables.
   let result = null;
   let currentMatchScore = -1;
 
   // Iterate over brand colors.
-  for (const ibmColor of ibmColorsArray) {
+  for (const ibmColor of brandColors) {
     const score = matchScore(rgbColorArray, ibmColor.rgb);
 
     // If score is higher than current match score and it passes the confidence threshold then set the current match to
@@ -170,8 +197,8 @@ function getMatchingIbmColor(rgbColorArray, confidenceThreshold) {
 }
 
 
-const ibmColorsArray = [];
-// Get all of the IBM colors in an array that is easier to search through.
+const brandColors = [];
+// Get all of the brand colors in an array that is easier to search through.
 for (const colorsObject of IBMColors.palettes) {
   for (const colorValue of colorsObject.values) {
     const {grade, value} = colorValue;
@@ -182,15 +209,17 @@ for (const colorsObject of IBMColors.palettes) {
       name: colorsObject.name,
     }
 
-    ibmColorsArray.push(colorObjectValue);
+    brandColors.push(colorObjectValue);
   }
 };
 
 
 export {
   hexColorToRgb,
+  rgbColorStringToArray,
   rgbColorToHex,
   colorContrast,
+  getVisibleTextColor,
   matchScore,
-  getMatchingIbmColor,
+  getMatchingBrandColor,
 };
