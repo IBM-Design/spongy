@@ -1,6 +1,8 @@
 const path = require('path');
 const gulp = require('gulp');
 const sass = require('gulp-sass');
+const svg2png = require('gulp-svg2png');
+const rename = require('gulp-rename');
 const webpack = require('webpack-stream');
 const webpackConfig = require('./webpack.config.js');
 
@@ -31,10 +33,21 @@ gulp.task('html', () => {
     .pipe(gulp.dest(paths.dist.html));
 });
 
-// Images build task
-gulp.task('imgs', () => {
-  return gulp.src(`${paths.src.imgs}/*`)
-    .pipe(gulp.dest(paths.dist.imgs));
+const iconSizes = [128, 48, 32, 24, 16];
+
+// Icon build task
+gulp.task('icons', () => {
+  return iconSizes.forEach((size) => {
+    gulp.src(`${paths.src.imgs}/icon.svg`)
+      .pipe(svg2png({
+        height: size,
+        width: size
+      }))
+      .pipe(rename({
+        suffix: `_${size}`,
+      }))
+      .pipe(gulp.dest(paths.dist.imgs));
+  })
 });
 
 // Javascript build task
@@ -51,11 +64,11 @@ gulp.task('styles', () => {
     .pipe(gulp.dest(paths.dist.styles));
 });
 
-gulp.task('build', ['html', 'imgs', 'scripts', 'styles']);
+gulp.task('build', ['html', 'icons', 'scripts', 'styles']);
 
 gulp.task('default', ['build'], () => {
   gulp.watch(`${paths.src.html}/**/*.html`, ['html']);
-  gulp.watch(`${paths.src.imgs}/**/*`, ['imgs']);
+  gulp.watch(`${paths.src.imgs}/icon.svg`, ['icons']);
   gulp.watch(`${paths.src.scripts}/**/*.js`, ['scripts']);
   gulp.watch(`${paths.src.styles}/**/*.scss`, ['styles']);
 });
