@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {hexColorToRgb, rgbColorToHex, colorContrast, matchScore, getMatchingBrandColor} from '../src/scripts/utils/color';
+import {hexColorToRgb, rgbColorToHex, colorContrast, matchScore, getMatchingBrandColor, rgbColorStringToArray} from '../src/scripts/utils/color';
 
 
 describe('utils.color', () => {
@@ -106,4 +106,14 @@ describe('utils.color', () => {
       assert.strictEqual(color, null);
     });
   });
+
+  describe('#rgbColorStringToArray', () => {
+    it('should return [12, 0, 250]', () => {
+      assert.deepEqual(rgbColorStringToArray('rgb(12, 0, 250)'), [12, 0, 250]);
+    });
+
+    it('should return [12, 0, 250]', () => {
+      assert.deepEqual(rgbColorStringToArray('rgb(12,0,250)'), [12, 0, 250]);
+    });
+  })
 });

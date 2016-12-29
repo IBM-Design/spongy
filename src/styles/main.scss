@@ -1,6 +1,8 @@
 $base-z: 100000;
 $box-shadow: 0 0 10px rgba(40, 40, 40, 0.3);
-#IBMEyeDropper {
+$prefix: spongyEyeDropper;
+
+##{$prefix} {
   pointer-events: all;
 
   &Canvas {
@@ -13,7 +15,7 @@ $box-shadow: 0 0 10px rgba(40, 40, 40, 0.3);
     z-index: $base-z;
   }
 
-  &Container {
+  &Loupe {
     height: 100px;
     width: 100px;
     overflow: hidden;
@@ -77,16 +79,14 @@ $box-shadow: 0 0 10px rgba(40, 40, 40, 0.3);
 }
 
 
-.IBMEyeDropper {
+.#{$prefix} {
   &Pixel {
     margin: 0;
     padding: 0;
-    box-shadow: 1px 1px 0 rgba(40, 40, 40, 0.3);
+    box-shadow: 0 0 0 1px rgba(40, 40, 40, 0.3);
 
     &.middle {
       position: relative;
-      top: 1px;
-      left: 1px;
       box-shadow: 0 0 0 2px rgba(40, 40, 40, 0.5);
     }
   }

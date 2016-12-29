@@ -4,7 +4,7 @@ import * as IBMColors from '../../../node_modules/ibm-design-colors/source/color
  * Turn a hexadecimal color value into an array of red, green, blue values in base 10.
  *
  * @param {string} hexColor String of color value in hexadecimal format.
- * @returns {number[]} Array of red, green, blue values of hexadecimal color.
+ * @returns {number[]} Array of red, green, blue values of color.
  * @public
  */
 function hexColorToRgb(hexColor) {
@@ -14,6 +14,23 @@ function hexColorToRgb(hexColor) {
   const red = parseInt(hexColor.substr((0 + offset), 2), 16);
   const green = parseInt(hexColor.substr((2 + offset), 2), 16);
   const blue = parseInt(hexColor.substr((4 + offset), 2), 16);
+
+  return [red, green, blue];
+}
+
+
+/**
+ * Turn an RGB CSS color function string into an RGB array.
+ *
+ * @param {string} rgbColorString of color value in hexadecimal format.
+ * @returns {number[]} Array of red, green, blue values of color.
+ * @public
+ */
+function rgbColorStringToArray(rgbColorString) {
+  const rgbColorArray = rgbColorString.match(/\((\d{1,3}),\s?(\d{1,3}),\s?(\d{1,3})\)/);
+  const red = parseInt(rgbColorArray[1]);
+  const green = parseInt(rgbColorArray[2]);
+  const blue = parseInt(rgbColorArray[3]);
 
   return [red, green, blue];
 }
@@ -102,6 +119,7 @@ function relativeLuminance(color) {
  * @param {string} colorOne Color to get contrast ratio of in hexadecimal format.
  * @param {string} colorTwo Color to get contrast ratio of in hexadecimal format.
  * @returns {number} The contrast ratio float up to one decimal place.
+ * @public
  */
 function colorContrast(colorOne, colorTwo) {
   // Get both colors into RGB array
@@ -198,7 +216,9 @@ for (const colorsObject of IBMColors.palettes) {
 
 export {
   hexColorToRgb,
+  rgbColorStringToArray,
   rgbColorToHex,
+  colorContrast,
   getVisibleTextColor,
   matchScore,
   getMatchingBrandColor,

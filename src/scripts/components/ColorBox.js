@@ -1,11 +1,10 @@
-import {PREFIX, EYE_DROPPER} from '../config';
 import {createDiv, createSpan, appendChildren} from '../utils/dom';
 import {rgbColorToHex, colorContrast, getVisibleTextColor, getMatchingBrandColor} from '../utils/color';
 
 /**
  * Create Color Box element.
  *
- * @param {string} prefix The prefix than can be applied to the ID of the color box to namespace it.
+ * @param {string} prefix The prefix than can be applied to the ID of the Color Box to namespace it.
  * @public
  */
 function createColorBox(prefix = '') {

@@ -54,6 +54,7 @@ function appendChildren(container, ...children) {
 }
 
 export {
+  createElement,
   createDiv,
   createSpan,
   appendChildren,
