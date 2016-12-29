@@ -14,7 +14,7 @@ const Loupe = {
   },
 
   render: function() {
-    EYE_DROPPER.appendChild(this.element);
+    return this.element;
   },
 
   createPixels: function() {

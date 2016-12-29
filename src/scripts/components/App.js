@@ -1,13 +1,16 @@
 import {EYE_DROPPER, PREFIX} from '../config';
 import MESSAGE_TYPES from '../message_types';
 import Loupe from './Loupe';
-import ColorBox from './ColorBox';
+import {createColorBox, updateColorBox} from './ColorBox';
+import {appendChildren} from '../utils/dom';
 import Screenshot from './Screenshot';
+
+let colorBox;
 
 const App = {
   init: function () {
     Loupe.init();
-    ColorBox.init();
+    colorBox = createColorBox(PREFIX);
     Screenshot.init();
     this.processExtensionMessage = this.processExtensionMessage.bind(this);
     this.moveEyeDropper = this.moveEyeDropper.bind(this);
@@ -37,8 +40,7 @@ const App = {
     document.addEventListener('scroll', this.handleViewChange);
     window.addEventListener('resize', this.handleViewChange);
 
-    Loupe.render();
-    ColorBox.render();
+    appendChildren(EYE_DROPPER, colorBox.container, Loupe.render());
     Screenshot.render();
 
     this.appendUI();
@@ -90,7 +92,7 @@ const App = {
 
   readColor: function () {
     const color = Loupe.getMiddlePixelColor();
-    ColorBox.recolor(color);
+    updateColorBox(colorBox, color);
   },
 
   handleKeyPress: function (event) {

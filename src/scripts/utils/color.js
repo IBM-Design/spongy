@@ -102,7 +102,6 @@ function relativeLuminance(color) {
  * @param {string} colorOne Color to get contrast ratio of in hexadecimal format.
  * @param {string} colorTwo Color to get contrast ratio of in hexadecimal format.
  * @returns {number} The contrast ratio float up to one decimal place.
- * @public
  */
 function colorContrast(colorOne, colorTwo) {
   // Get both colors into RGB array
@@ -122,6 +121,16 @@ function colorContrast(colorOne, colorTwo) {
 
   // Round up to single decimal place
   return Math.round(rawRatio * 10) / 10;
+}
+
+/**
+ * Get the appropriate text color of an element based on the background color to maximize color contrast and readbility.
+ *
+ * @param {string} hexBackgroundColor Background color value in hexadecimal format.
+ * @public
+ */
+function getVisibleTextColor(hexBackgroundColor) {
+  return colorContrast(hexBackgroundColor, '#FFFFFF') > 3 ? '#FFFFFF' : '#000000';
 }
 
 
@@ -149,13 +158,13 @@ function matchScore(colorOneRgbArray, colorTwoRgbArray) {
  * @returns {object|boolean} The IBM color object.
  * @public
  */
-function getMatchingIbmColor(rgbColorArray, confidenceThreshold) {
+function getMatchingBrandColor(rgbColorArray, confidenceThreshold) {
   // Instantiate result and current match score variables.
   let result = null;
   let currentMatchScore = -1;
 
   // Iterate over brand colors.
-  for (const ibmColor of ibmColorsArray) {
+  for (const ibmColor of brandColors) {
     const score = matchScore(rgbColorArray, ibmColor.rgb);
 
     // If score is higher than current match score and it passes the confidence threshold then set the current match to
@@ -170,8 +179,8 @@ function getMatchingIbmColor(rgbColorArray, confidenceThreshold) {
 }
 
 
-const ibmColorsArray = [];
-// Get all of the IBM colors in an array that is easier to search through.
+const brandColors = [];
+// Get all of the brand colors in an array that is easier to search through.
 for (const colorsObject of IBMColors.palettes) {
   for (const colorValue of colorsObject.values) {
     const {grade, value} = colorValue;
@@ -182,7 +191,7 @@ for (const colorsObject of IBMColors.palettes) {
       name: colorsObject.name,
     }
 
-    ibmColorsArray.push(colorObjectValue);
+    brandColors.push(colorObjectValue);
   }
 };
 
@@ -190,7 +199,7 @@ for (const colorsObject of IBMColors.palettes) {
 export {
   hexColorToRgb,
   rgbColorToHex,
-  colorContrast,
+  getVisibleTextColor,
   matchScore,
-  getMatchingIbmColor,
+  getMatchingBrandColor,
 };
