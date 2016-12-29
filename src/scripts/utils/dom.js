@@ -7,7 +7,7 @@
  * @returns {HTMLElement} The newly created element.
  * @public
  */
- function createElement(tagName ='div',id = '', ...classNames) {
+ function createElement(tagName ='div', id = '', ...classNames) {
   const element = document.createElement(tagName);
   element.id = id;
   element.classList.add(...classNames);
@@ -28,6 +28,7 @@ function createDiv(id = '', ...classNames) {
   return createElement('div', id, ...classNames);
 }
 
+
 /**
  * Create a SPAN HTML element.
  *
@@ -39,6 +40,23 @@ function createDiv(id = '', ...classNames) {
 function createSpan(id = '', ...classNames) {
   return createElement('span', id, ...classNames);
 }
+
+
+/**
+ * Create a text INPUT HTML element.
+ *
+ * @param {string} id The ID to be applied to the text INPUT.
+ * @param {...string} classNames The class names to be applied to the text INPUT.
+ * @returns {HTMLElement} The newly created text INPUT.
+ * @public
+ */
+function createTextInput(id = '', ...classNames) {
+  const input = createElement('input', id, ...classNames);
+  input.type = 'text';
+
+  return input;
+}
+
 
 /**
  * Append any number of elements to a container element.
@@ -57,5 +75,6 @@ export {
   createElement,
   createDiv,
   createSpan,
+  createTextInput,
   appendChildren,
 };
