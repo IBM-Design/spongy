@@ -8,9 +8,11 @@
 
   "browser_action": {
     "default_icon": {
-      "16": "dist/imgs/16x16.gif"
+      "16": "dist/imgs/icon_16.png",
+      "24": "dist/imgs/icon_24.png",
+      "32": "dist/imgs/icon_32.png"
     },
-    "default_title": "Check for brand colors",
+    "default_title": "Spongy: Check for brand colors",
     "default_popup": "dist/html/popup.html"
   },
   "permissions": ["activeTab"],
@@ -18,6 +20,12 @@
   "background": {
     "scripts" : ["dist/scripts/background.js"],
     "persistent": false
+  },
+
+  "icons": {
+    "16": "dist/imgs/icon_16.png",
+    "48": "dist/imgs/icon_48.png",
+    "128": "dist/imgs/icon_128.png"
   },
 
   "content_scripts": [{

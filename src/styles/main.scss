@@ -79,12 +79,18 @@ $prefix: spongyEyeDropper;
 
   &BrandText {
     height: 1.5em;
-    border: 1px solid currentColor;
+    margin: 0;
 
     font-size: inherit;
     font-family: inherit;
 
     background-color: rgba(#FFF, 0.9);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid currentColor;
+
+    &::placeholder {
+      color: color('cool-gray', 20);
+    }
   }
 }
 
