@@ -38,7 +38,7 @@ function createColorBox(prefix = '') {
 function updateColorBoxText(colorBox, hexColor, brandColor) {
   const {color, name, grade} = colorBox;
 
-  let nameText = 'No matching color';
+  let nameText = 'No match';
   let gradeText = '';
   if (brandColor) {
     nameText = brandColor.name;
@@ -71,6 +71,7 @@ function updateColorBox(colorBox, colorData) {
 
   container.style.backgroundColor = hexColor;
   container.style.color = getVisibleTextColor(hexColor);
+  container.classList.add('active');
   updateColorBoxText(colorBox, hexColor, matchingBrandColor);
 }
 

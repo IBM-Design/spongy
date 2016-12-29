@@ -61,26 +61,6 @@ function getMiddlePixelIndex(size) {
 
 
 /**
- * Move Loupe to a specific x and y location.
- *
- * @param {object} loupe Loupe elements object.
- * @param {HTMLElement} loupe.container Loupe container element.
- * @param {number} x Coordinate for Loupe x positioning.
- * @param {number} y Coordinate for Loupe y positioning.
- * @public
- */
-function moveLoupe(loupe, x, y)  {
-  const {container} = loupe;
-  const {innerWidth, innerHeight} = window;
-  const spacing = container.style.height;
-  const xOffset = (x + spacing) >= innerWidth ? -spacing : 0;
-  const yOffset = (y + spacing) >= innerHeight ? -spacing : 0;
-
-  container.style.transform = `translate(${xOffset + x + 4}px, ${yOffset + y + 4}px)`;
-};
-
-
-/**
  * Color all of the pixels inside the Loupe.
  *
  * @param {object} loupe Loupe elements object.
@@ -106,7 +86,6 @@ function getMiddlePixelColor(loupe) {
 
 export {
   createLoupe,
-  moveLoupe,
   updateLoupePixelColors,
   getMiddlePixelColor,
 };
