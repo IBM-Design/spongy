@@ -6,20 +6,18 @@ If you're someone who works with brand colors often, you might have a hex to bra
 
 Worry not! This tool will help get your brand specific color information from any website, image, or app in Google Chrome.
 
-## Development Setup
+## How to get Spongy
 
-To set up your Google Chrome browser to test this extension you need to:
+This tool is still in testing stages and is not yet ready for the Google Chrome Store and it only works with IBM Design colors. However, it doesn't mean you can't get your hands on it and use it. In fact, please do so this tool can evolve quicker and better!
 
-1. Clone this repository.
+Here is how to add this extension to your Google Chrome browser:
 
-2. Install NPM packages
+1. Download the [spongy.crx](https://github.com/IBM-Design/spongy/blob/issue-10-contribute-instructions/spongy.crx?raw=true) file.
 
-2. Start development build process by entering `npm start` in your terminal.
+2. Once downloaded, go to your extensions panel: `chrome://extensions/`.
 
-3. Turn on Developer mode by going to *Window > Extensions* to open your Extensions Panel. Then check *Developer mode* on the upper right.
+3. Drag and drop the downloaded `.crx` file onto the extension panel.
 
-4. In the Extensions Panel, click *Load unpacked extension...*, then navigate to and select the `spongy` folder that you just cloned.
+4. Chrome will ask you if you want to give Spongy permissions to read and modify content you're viewing. Click 'Add extension'. _Don't worry, it's not malicious. All Spongy needs this data for is to read the pixel color information on pages you're viewing and display on the extension UI._
 
-5. The Spongy extension will appear in your panel as well as an extension button on the right of your address bar.
-
-6. You can now start making changes to the code and just refresh any (non-Google) page to see latest changes.
+5. Enjoy Spongy! If you encounter any problems or bugs please [submit an issue](https://github.com/IBM-Design/spongy/issues) and if you would like to contribute [read the guide](https://github.com/IBM-Design/spongy/blob/master/CONTRIBUTING.md).
