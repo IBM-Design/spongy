@@ -1,73 +1,91 @@
-import {SIZE, PREFIX, EYE_DROPPER} from '../config';
+import {createDiv, appendChildren} from '../utils/dom';
+import {rgbColorStringToArray} from '../utils/color';
 
-const Loupe = {
-  element: document.createElement('div'),
-  size: SIZE,
-  pixels: [],
-  middleColor: [],
+/**
+ * Create Loupe element.
+ *
+ * @param {string} prefix The prefix than can be applied to the ID of the Loupe to namespace it.
+ * @param {number} size The size of the Loupe in how many vertical and horizontal pixels it will have.
+ * @public
+ */
+function createLoupe(prefix = '', size) {
+  const container = createDiv(`${prefix}Loupe`);
+  const pixels = createPixelsArray(prefix, size);
+  const middlePixel = pixels[getMiddlePixelIndex(size)];
 
-  init: function(loupeSize) {
-    this.element.id = `${PREFIX}Container`;
+  appendChildren(container, ...pixels);
 
-    // Create pixels to fill in container element.
-    this.createPixels();
-  },
+  return {
+    container,
+    pixels,
+    middlePixel,
+  };
+}
 
-  render: function() {
-    EYE_DROPPER.appendChild(this.element);
-  },
 
-  createPixels: function() {
-    const {size, pixels, element} = this;
-    for (let pixelIndex = 0; pixelIndex < (size * size); pixelIndex++) {
-      const pixel = document.createElement('div');
-      pixel.classList.add(`${PREFIX}Pixel`);
-      pixel.id = `${PREFIX}Pixel-${pixelIndex};`
-      pixel.style.width = `${100 / size}%`;
-      pixel.style.height = `${100 / size}%`;
-      // Make every new pixel lower in z-index so that the pixel divider shadows will show.
-      if (this.isMiddlePixelIndex(pixelIndex)) {
-        pixel.style.zIndex = size + 2;
-        pixel.classList.add('middle');
-      } else {
-        pixel.style.zIndex = size - pixelIndex + 1;
-      }
+/**
+ * Create pixel elements.
+ *
+ * @param {string} prefix The prefix that is applied to the class name of the pixels.
+ * @param {number} size The size of the Loupe in how many vertical and horizontal pixels it will have.
+ * @returns {HTMLElement[]} Array of Pixel elements.
+ */
+function createPixelsArray(prefix, size) {
+  const pixels = [];
+  const middlePixelIndex = getMiddlePixelIndex(size);
 
-      // Cache pixels to recolor later.
-      pixels.push(pixel);
-
-      // Add to container element.
-      element.appendChild(pixel);
+  for (let pixelIndex = 0; pixelIndex < (Math.pow(size, 2)); pixelIndex++) {
+    const pixelClassNames = [`${prefix}Pixel`];
+    if (pixelIndex === middlePixelIndex) {
+      pixelClassNames.push('middle');
     }
-  },
 
-  move: function(x, y, colorData)  {
-    this.element.style.transform = `translate(${x + 4}px, ${y + 4}px)`;
-    this.colorPixels(colorData);
-  },
-
-  colorPixels: function(colorData) {
-    const {pixels, size} = this;
-    for (let pixelIndex = 0; pixelIndex < (size * size); pixelIndex++) {
-      const colorDataBaseIndex = pixelIndex * 4;
-
-      if (this.isMiddlePixelIndex(pixelIndex)) {
-        this.middleColor = colorData.slice(colorDataBaseIndex, colorDataBaseIndex + 3);
-      }
-
-      const newColor = `rgba(${colorData[colorDataBaseIndex]}, ${colorData[colorDataBaseIndex + 1]}, ${colorData[colorDataBaseIndex + 2]}, 1)`;
-      pixels[pixelIndex].style.backgroundColor = newColor;
-    }
-  },
-
-  isMiddlePixelIndex: function(pixelIndex) {
-    const {size} = this;
-    return pixelIndex === Math.round(((size * size) - 1) / 2);
-  },
-
-  getMiddlePixelColor: function() {
-    return this.middleColor;
+    const pixel = createDiv(null, ...pixelClassNames);
+    pixel.style.width = `${100 / size}%`;
+    pixel.style.height = `${100 / size}%`;
+    pixels.push(pixel);
   }
+  return pixels;
+}
+
+
+/**
+ * Given the size of the Loupe return the index of what the middle pixel is.
+ *
+ * @param {number} size The size of the loupe.
+ * @returns {number} The index of the middle pixel.
+ */
+function getMiddlePixelIndex(size) {
+  return Math.round(((Math.pow(size, 2)) - 1) / 2);
 };
 
-export default Loupe;
+
+/**
+ * Color all of the pixels inside the Loupe.
+ *
+ * @param {object} loupe Loupe elements object.
+ * @param {number[]} colorData Array of RGBA values for an area the size of the Loupe.
+ * @public
+ */
+function updateLoupePixelColors(loupe, colorData) {
+  const {pixels} = loupe;
+
+  pixels.forEach((pixel, pixelIndex) => {
+    const colorDataBaseIndex = pixelIndex * 4;
+    const color = `rgba(${colorData[colorDataBaseIndex]}, ${colorData[colorDataBaseIndex + 1]}, ${colorData[colorDataBaseIndex + 2]}, 1)`;
+    pixels[pixelIndex].style.backgroundColor = color;
+  });
+};
+
+
+function getMiddlePixelColor(loupe) {
+  const {middlePixel} = loupe;
+  return rgbColorStringToArray(middlePixel.style.backgroundColor);
+}
+
+
+export {
+  createLoupe,
+  updateLoupePixelColors,
+  getMiddlePixelColor,
+};

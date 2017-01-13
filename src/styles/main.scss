@@ -1,7 +1,20 @@
+@import '../../node_modules/ibm-design-colors/_ibm-colors.scss';
+
 $base-z: 100000;
 $box-shadow: 0 0 10px rgba(40, 40, 40, 0.3);
-#IBMEyeDropper {
-  pointer-events: all;
+$border: 3px solid #FFF;
+$prefix: spongyEyeDropper;
+
+##{$prefix} {
+  height: 100%;
+  width: 100%;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $base-z;
+
+  cursor: crosshair;
 
   &Canvas {
     height: 100%;
@@ -14,6 +27,13 @@ $box-shadow: 0 0 10px rgba(40, 40, 40, 0.3);
   }
 
   &Container {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    z-index: 1;
+  }
+
+  &Loupe {
     height: 100px;
     width: 100px;
     overflow: hidden;
@@ -21,72 +41,69 @@ $box-shadow: 0 0 10px rgba(40, 40, 40, 0.3);
     display: flex;
     flex-wrap: wrap;
 
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: $base-z + 1;
-
-    border: 3px solid #FFF;
+    border: $border;
     border-radius: 50%;
     box-shadow: $box-shadow;
   }
 
-  &Colorbox {
-    height: 3em;
+  &ColorBox {
+    display: none;
+    min-height: 3em;
+    margin-left: -1.8em;
     padding: 0.8em;
-    width: 9em;
-
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: $base-z;
+    padding-left: 3em;
+    min-width: 8em;
+    z-index: -1;
 
     font-family: sans-serif;
     font-size: 14px;
+    line-height: 1.2;
 
-    color: #000;
-    box-shadow: $box-shadow;
+    border: $border;
+    border-radius: 0.3em;
     box-sizing: content-box;
 
-    &:hover {
-      opacity: 0.3;
-    }
-
-    &.inverse {
-      color: #FFF;
+    &.active {
+      display: block;
+      box-shadow: $box-shadow;
     }
   }
 
   &ColorText {
     display: block;
-    margin: 0 0 0.2em;
+    margin: 0 0 0.3em;
 
     font-size: 1.2em;
     text-transform: uppercase;
   }
 
-  &NameText {
-    text-transform: capitalize;
-    display: inline-block;
-    margin: 0 0.5em 0 0;
-  }
-
-  &GradeText {
+  &BrandText {
+    height: 1.5em;
     margin: 0;
+
+    font-size: inherit;
+    font-family: inherit;
+
+    background-color: rgba(#FFF, 0.9);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    color: #000000;
+    border: 1px solid currentColor;
+
+    &::placeholder {
+      color: color('cool-gray', 20);
+    }
   }
 }
 
 
-.IBMEyeDropper {
+.#{$prefix} {
   &Pixel {
     margin: 0;
     padding: 0;
-    box-shadow: 1px 1px 0 rgba(40, 40, 40, 0.3);
+    box-shadow: 0 0 0 1px rgba(40, 40, 40, 0.3);
 
     &.middle {
       position: relative;
-      top: 1px;
-      left: 1px;
       box-shadow: 0 0 0 2px rgba(40, 40, 40, 0.5);
     }
   }

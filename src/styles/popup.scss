@@ -1,12 +1,15 @@
 body {
   font-family: sans-serif;
-  min-width: 10rem;
+  min-width: 11rem;
 }
 
 .keyboard-key {
-  background-color: #E8E8E8;
   display: inline-block;
   padding: 0.2em 0.5em;
+  position: relative;
+  top: -0.2em;
+
+  background-color: #E8E8E8;
   border-radius: 0.3em;
   box-shadow: 0 3px 0 #DDD;
 }
