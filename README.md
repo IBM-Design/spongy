@@ -2,6 +2,8 @@
 
 > A Google Chrome extension eye dropper tool for any set of brand colors.
 
+![Spongy in action](/spongy.gif?raw=true)
+
 If you're someone who works with brand colors often, you might have a hex to brand color and grade cheatsheet with you at all times. That way when you're working with a design where all you get is hex values, you can determine which Sass mixin you need to get that same color.
 
 Worry not! This tool will help get your brand specific color information from any website, image, or app in Google Chrome.
