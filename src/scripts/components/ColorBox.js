@@ -1,5 +1,5 @@
 import {createDiv, createSpan, createTextInput, appendChildren} from '../utils/dom';
-import {rgbColorToHex, colorContrast, getVisibleTextColor, getMatchingBrandColor} from '../utils/color';
+import {rgbColorToHex, normalizeHexString, colorContrast, getVisibleTextColor, getMatchingBrandColor} from '../utils/color';
 
 /**
  * Create Color Box element.
@@ -42,7 +42,7 @@ function updateColorBoxText(colorBox, hexColor, brandColor) {
     brandInputText = `'${brandColor.name}', ${brandColor.grade}`;
   }
 
-  color.textContent = hexColor;
+  color.textContent = normalizeHexString(hexColor);
   brandInput.value = brandInputText;
   brandInput.select();
 }
@@ -59,11 +59,11 @@ function updateColorBoxText(colorBox, hexColor, brandColor) {
  * Color Box.
  * @public
  */
-function updateColorBox(colorBox, colorData) {
+function updateColorBox(colorBox, colorData, brandColors) {
   const {container} = colorBox;
   const rgbColor = Array.from(colorData);
   const hexColor = rgbColorToHex(rgbColor);
-  const matchingBrandColor = getMatchingBrandColor(rgbColor, 0.95);
+  const matchingBrandColor = getMatchingBrandColor(rgbColor, 0.95, brandColors);
 
   container.style.backgroundColor = hexColor;
   container.style.color = getVisibleTextColor(hexColor);

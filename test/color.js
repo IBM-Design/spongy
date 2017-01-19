@@ -1,22 +1,32 @@
+import * as IBMColors from '../node_modules/ibm-design-colors/source/colors';
 import {assert} from 'chai';
-import {hexColorToRgb, rgbColorToHex, colorContrast, matchScore, getMatchingBrandColor, rgbColorStringToArray} from '../src/scripts/utils/color';
+import {
+  hexColorToRgb,
+  rgbColorToHex,
+  normalizeHexString,
+  colorContrast,
+  matchScore,
+  getMatchingBrandColor,
+  rgbColorStringToArray,
+  addBrandColorsToArray,
+} from '../src/scripts/utils/color';
 
 
 describe('utils.color', () => {
   describe('#rgbColorToHex', () => {
     const color = [255, 255, 255];
 
-    it('should return #ffffff', () => {
-      assert.strictEqual(rgbColorToHex(color), '#ffffff');
+    it('should return #FFFFFF', () => {
+      assert.strictEqual(rgbColorToHex(color), '#FFFFFF');
     });
 
-    it('should not return #bada55', () => {
-      assert.notStrictEqual(rgbColorToHex(color), '#bada55');
+    it('should not return #BADA55', () => {
+      assert.notStrictEqual(rgbColorToHex(color), '#BADA55');
     });
   });
 
   describe('#hexColorToRgb', () => {
-    const color = '#ffffff';
+    const color = '#FFFFFF';
 
     it('should return [255, 255, 255]', () => {
       assert.deepEqual(hexColorToRgb(color), [255, 255, 255]);
@@ -27,6 +37,24 @@ describe('utils.color', () => {
     });
   });
 
+  describe('#normalizeHexString', () => {
+    const expectedString = '#FFFFFF';
+
+    // Test string doubling
+    it('"#FFF" should return #FFFFFF', () => {
+      assert.strictEqual(normalizeHexString('#FFF'), expectedString);
+    });
+
+    // Test string trimming
+    it('"#ffffffaa" should return #FFFFFF', () => {
+      assert.strictEqual(normalizeHexString('#ffffffaa'), expectedString);
+    });
+
+    // Test adding of # to string
+    it('"ffffff" should return #FFFFFF', () => {
+      assert.strictEqual(normalizeHexString('ffffff'), expectedString);
+    });
+  });
 
   describe('#colorContrast', () => {
     const baseColor = '#FFFFFF';
@@ -81,28 +109,32 @@ describe('utils.color', () => {
   describe('#getMatchingIbmColor', () => {
     const confidenceThreshold = 0.95;
 
+    // Create brand colors iterator.
+    const brandColors = [];
+    addBrandColorsToArray(brandColors, IBMColors.palettes);
+
     it('should return confident aqua 40', () => {
-      const color = getMatchingBrandColor([18, 163, 180], confidenceThreshold);
-      assert.deepEqual(color, {grade: '40', name: 'aqua', hex: '#12a3b4', rgb: [18, 163, 180]});
+      const color = getMatchingBrandColor([18, 163, 180], confidenceThreshold, brandColors);
+      assert.deepEqual(color, {grade: 40, name: 'aqua', hex: '#12A3B4', rgb: [18, 163, 180]});
     });
 
     it('should return confident aqua 90', () => {
-      const color = getMatchingBrandColor([18, 42, 46], confidenceThreshold);
-      assert.deepEqual(color, {grade: '90', name: 'aqua', hex: '#122a2e', rgb: [18, 42, 46]});
+      const color = getMatchingBrandColor([18, 42, 46], confidenceThreshold, brandColors);
+      assert.deepEqual(color, {grade: 90, name: 'aqua', hex: '#122A2E', rgb: [18, 42, 46]});
     });
 
     it('should return confident yellow 10', () => {
-      const color = getMatchingBrandColor([253, 214, 0], confidenceThreshold);
-      assert.deepEqual(color, {grade: '10', name: 'yellow', hex: '#fed500', rgb: [254, 213, 0]});
+      const color = getMatchingBrandColor([253, 214, 0], confidenceThreshold, brandColors);
+      assert.deepEqual(color, {grade: 10, name: 'yellow', hex: '#FED500', rgb: [254, 213, 0]});
     });
 
     it('should return confident magenta 40', () => {
-      const color = getMatchingBrandColor([230, 86, 165], confidenceThreshold);
-      assert.deepEqual(color, {grade: '40', name: 'magenta', hex: '#ff509e', rgb: [255, 80, 158]});
+      const color = getMatchingBrandColor([230, 86, 165], confidenceThreshold, brandColors);
+      assert.deepEqual(color, {grade: 40, name: 'magenta', hex: '#FF509E', rgb: [255, 80, 158]});
     });
 
     it('should return null', () => {
-      const color = getMatchingBrandColor([124, 205, 15], confidenceThreshold);
+      const color = getMatchingBrandColor([124, 205, 15], confidenceThreshold, brandColors);
       assert.strictEqual(color, null);
     });
   });

@@ -1,7 +1,9 @@
+import * as IBMColors from '../../../node_modules/ibm-design-colors/source/colors';
 import {createLoupe, moveLoupe, updateLoupePixelColors, getMiddlePixelColor} from './Loupe';
 import {createColorBox, updateColorBox} from './ColorBox';
-import {createDiv, appendChildren} from '../utils/dom';
 import {createScreenshot, updateScreenshot, getColorData} from './Screenshot';
+import {createDiv, appendChildren} from '../utils/dom';
+import {addBrandColorsToArray} from '../utils/color';
 import MESSAGE_TYPES from '../constants/message_types';
 
 function App() {
@@ -9,6 +11,7 @@ function App() {
   const PREFIX = 'spongyEyeDropper';
   const APP = createDiv(PREFIX);
   let isAppActive = false;
+  let brandColors = [];
 
   const ui = createDiv(`${PREFIX}Container`);
   const loupe = createLoupe(PREFIX, SIZE);
@@ -16,6 +19,16 @@ function App() {
   const screenshot = createScreenshot(PREFIX);
 
   chrome.runtime.onMessage.addListener(processExtensionMessage);
+
+  /**
+   * Function to configure brand color data of App.
+   *
+   * @param {object[]} data The data object that contains brand color information.
+   *
+   */
+  function configure(data) {
+    addBrandColorsToArray(brandColors, data);
+  }
 
   /**
    * Handle messages from extension.
@@ -29,6 +42,12 @@ function App() {
     switch (message.type) {
       case MESSAGE_TYPES.SCREENSHOT_DATA: {
         updateScreenshot(screenshot, message.data);
+
+        // If no brand colors were configured, add in IBM Design Colors.
+        if (brandColors.length === 0) {
+          configure(IBMColors.palettes);
+        }
+
         if (!isAppActive) {
           activate();
         }
@@ -150,7 +169,7 @@ function App() {
    */
   function readColor() {
     const color = getMiddlePixelColor(loupe);
-    updateColorBox(colorBox, color);
+    updateColorBox(colorBox, color, brandColors);
   }
 
 
@@ -177,6 +196,10 @@ function App() {
       default:
     }
   }
+
+  return {
+    configure,
+  };
 }
 
 export default App;

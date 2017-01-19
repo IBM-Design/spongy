@@ -1,5 +1,3 @@
-import * as IBMColors from '../../../node_modules/ibm-design-colors/source/colors';
-
 /**
  * Turn a hexadecimal color value into an array of red, green, blue values in base 10.
  *
@@ -8,12 +6,11 @@ import * as IBMColors from '../../../node_modules/ibm-design-colors/source/color
  * @public
  */
 function hexColorToRgb(hexColor) {
-  // Set offset of hex color string if it starts with a #
-  const offset = hexColor.charAt(0) === '#' ? 1 : 0;
+  const normalizedHexColor = normalizeHexString(hexColor);
 
-  const red = parseInt(hexColor.substr((0 + offset), 2), 16);
-  const green = parseInt(hexColor.substr((2 + offset), 2), 16);
-  const blue = parseInt(hexColor.substr((4 + offset), 2), 16);
+  const red = parseInt(normalizedHexColor.substr((1), 2), 16);
+  const green = parseInt(normalizedHexColor.substr((3), 2), 16);
+  const blue = parseInt(normalizedHexColor.substr((5), 2), 16);
 
   return [red, green, blue];
 }
@@ -50,7 +47,30 @@ function rgbColorToHex(rgbColor) {
     return `00${channel.toString(16)}`.substr(-2, 2).toLowerCase();
   });
 
-  return `#${hexColorArray.join('')}`;
+  return normalizeHexString(hexColorArray.join(''));
+}
+
+/**
+ * Normalize a given string into a hexadecimal color value format by adding a #, doubling 3 character hexadecimal
+ * values, and uppercasing the entire string.
+ *
+ * @param {string} hexString String to be normalized.
+ * @return {string} Normalized string value.
+ * @public
+ */
+function normalizeHexString(hexString) {
+  let result = hexString;
+
+
+  if (result.charAt(0) !== '#') {
+    result = `#${result}`;
+  }
+
+  if (result.length === 4) {
+    result = `#${result[1]}${result[1]}${result[2]}${result[2]}${result[3]}${result[3]}`
+  }
+
+  return result.substr(0, 7).toUpperCase();
 }
 
 
@@ -176,19 +196,19 @@ function matchScore(colorOneRgbArray, colorTwoRgbArray) {
  * @returns {object|boolean} The IBM color object.
  * @public
  */
-function getMatchingBrandColor(rgbColorArray, confidenceThreshold) {
+function getMatchingBrandColor(rgbColorArray, confidenceThreshold, brandColors) {
   // Instantiate result and current match score variables.
   let result = null;
   let currentMatchScore = -1;
 
   // Iterate over brand colors.
-  for (const ibmColor of brandColors) {
-    const score = matchScore(rgbColorArray, ibmColor.rgb);
+  for (const brandColor of brandColors) {
+    const score = matchScore(rgbColorArray, brandColor.rgb);
 
     // If score is higher than current match score and it passes the confidence threshold then set the current match to
     // this brand color.
     if ((score > currentMatchScore) && (score >= confidenceThreshold)) {
-      result = ibmColor;
+      result = brandColor;
       currentMatchScore = score;
     }
   }
@@ -196,30 +216,51 @@ function getMatchingBrandColor(rgbColorArray, confidenceThreshold) {
   return result;
 }
 
+/**
+ * Add brand colors to array to build a shallow list of brand colors to match for.
+ *
+ * @param {object[]} targetArray Array to push new brand colors to.
+ * @param {object[]} data Brand color data to be added to array.
+ * @public
+ */
+function addBrandColorsToArray(targetArray, data) {
+  // Example of required data structure:
+  //   data = [
+  //     {
+  //       name: blue,
+  //       values: [
+  //         {
+  //           name: <optional>,
+  //           grade: 10,
+  //           value: 'c8daf4',
+  //         },
+  //       ]
+  //     },
+  //   ]
+  for (const colorsObject of data) {
+    for (const colorValue of colorsObject.values) {
+      const {name, grade, value} = colorValue;
+      const colorObjectValue = {
+        grade: parseInt(grade),
+        hex: normalizeHexString(value),
+        rgb: hexColorToRgb(value),
+        name: name || colorsObject.name,
+      }
 
-const brandColors = [];
-// Get all of the brand colors in an array that is easier to search through.
-for (const colorsObject of IBMColors.palettes) {
-  for (const colorValue of colorsObject.values) {
-    const {grade, value} = colorValue;
-    const colorObjectValue = {
-      grade,
-      hex: `#${value}`,
-      rgb: hexColorToRgb(value),
-      name: colorsObject.name,
+      targetArray.push(colorObjectValue);
     }
-
-    brandColors.push(colorObjectValue);
   }
-};
+}
 
 
 export {
   hexColorToRgb,
   rgbColorStringToArray,
   rgbColorToHex,
+  normalizeHexString,
   colorContrast,
   getVisibleTextColor,
   matchScore,
   getMatchingBrandColor,
+  addBrandColorsToArray,
 };
