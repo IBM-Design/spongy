@@ -1,5 +1,7 @@
+import path from 'path';
+import { assert } from 'chai';
+import Jimp from 'jimp';
 import * as IBMColors from '../node_modules/ibm-design-colors/source/colors';
-import {assert} from 'chai';
 import {
   hexColorToRgb,
   rgbColorToHex,
@@ -86,10 +88,6 @@ describe('utils.color', () => {
   describe('#matchScore', () => {
     const color = [255, 255, 255];
 
-    function roundToHundreds(number){
-      return Math.round(number * 100) / 100;
-    }
-
     it('should return 0.00', () => {
       const testColor = [0, 0, 0];
       assert.strictEqual(roundToHundreds(matchScore(color, testColor)), 0.00);
@@ -113,26 +111,72 @@ describe('utils.color', () => {
     const brandColors = [];
     addBrandColorsToArray(brandColors, IBMColors.palettes);
 
-    it('should return confident aqua 40', () => {
-      const color = getMatchingBrandColor([18, 163, 180], confidenceThreshold, brandColors);
-      assert.deepEqual(color, {grade: 40, name: 'aqua', hex: '#12A3B4', rgb: [18, 163, 180]});
+    it('should return all brand colors', () => {
+      for (const palette of IBMColors.palettes) {
+        for (const colorValue of palette.values) {
+          const colorArray = hexColorToRgb(normalizeHexString(colorValue.value));
+          const color = getMatchingBrandColor(colorArray, confidenceThreshold, brandColors);
+          assert.deepEqual(color, {
+            grade: parseInt(colorValue.grade, 10),
+            name: getCoolGraySynonym(palette.name, colorValue.grade),
+            hex: normalizeHexString(colorValue.value),
+            rgb: hexColorToRgb(normalizeHexString(colorValue.value)),
+          });
+        }
+      }
     });
 
-    it('should return confident aqua 90', () => {
-      const color = getMatchingBrandColor([18, 42, 46], confidenceThreshold, brandColors);
-      assert.deepEqual(color, {grade: 90, name: 'aqua', hex: '#122A2E', rgb: [18, 42, 46]});
+    it('should test all color images ', (done) => {
+      const COLOR_HEIGHT = 50;
+      // Create brand colors iterator.
+      for (let quality = 40; quality <= 100; quality += 10) {
+        const brandColors = [];
+        addBrandColorsToArray(brandColors, IBMColors.palettes);
+
+        Jimp.read(path.join(process.cwd(), 'test/resources', `ibm-design-colors_quality-${quality}.jpg`), (error, image) => {
+          if (error) {
+            throw error;
+          }
+
+          const { height } = image.bitmap;
+          const totalColors = height / COLOR_HEIGHT;
+
+          for (let yIndex = 0; yIndex < totalColors; yIndex++) {
+            const yPosition = (yIndex * COLOR_HEIGHT) + (COLOR_HEIGHT / 2);
+            const pixelColor = image.getPixelColor(50, yPosition);
+
+            const rgbaColor = Jimp.intToRGBA(pixelColor);
+            const color = getMatchingBrandColor([rgbaColor.r, rgbaColor.g, rgbaColor.b], confidenceThreshold, brandColors);
+            const brandColor = brandColors[yIndex];
+            brandColor.name = getCoolGraySynonym(brandColor.name);
+
+            color.quality = quality;
+            brandColor.quality = quality;
+
+            color.index = yIndex * COLOR_HEIGHT;
+            brandColor.index = yIndex * COLOR_HEIGHT;
+
+            assert.deepEqual(color, brandColor);
+          }
+
+          if (quality === 100) {
+            done();
+          }
+        });
+
+      }
     });
 
-    it('should return confident yellow 10', () => {
-      const color = getMatchingBrandColor([253, 214, 0], confidenceThreshold, brandColors);
-      assert.deepEqual(color, {grade: 10, name: 'yellow', hex: '#FED500', rgb: [254, 213, 0]});
+    // Test matching colors
+    it('should return confident brand color', () => {
+      let color = getMatchingBrandColor([253, 214, 0], confidenceThreshold, brandColors);
+      assert.deepEqual(color, { grade: 10, name: 'yellow', hex: '#FED500', rgb: [254, 213, 0] });
+
+      color = getMatchingBrandColor([230, 86, 165], confidenceThreshold, brandColors);
+      assert.deepEqual(color, { grade: 40, name: 'magenta', hex: '#FF509E', rgb: [255, 80, 158] });
     });
 
-    it('should return confident magenta 40', () => {
-      const color = getMatchingBrandColor([230, 86, 165], confidenceThreshold, brandColors);
-      assert.deepEqual(color, {grade: 40, name: 'magenta', hex: '#FF509E', rgb: [255, 80, 158]});
-    });
-
+    // Test non-matching color
     it('should return null', () => {
       const color = getMatchingBrandColor([124, 205, 15], confidenceThreshold, brandColors);
       assert.strictEqual(color, null);
@@ -147,5 +191,18 @@ describe('utils.color', () => {
     it('should return [12, 0, 250]', () => {
       assert.deepEqual(rgbColorStringToArray('rgb(12,0,250)'), [12, 0, 250]);
     });
-  })
+  });
+
 });
+
+function getCoolGraySynonym(name, grade) {
+  const gradeInt = parseInt(grade, 10);
+  if (name === 'cool-gray' && (gradeInt === 80 || gradeInt === 90)) {
+    return 'gray';
+  }
+  return name;
+}
+
+function roundToHundreds(number) {
+  return Math.round(number * 100) / 100;
+}

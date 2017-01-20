@@ -1,24 +1,49 @@
 import * as IBMColors from '../../../node_modules/ibm-design-colors/source/colors';
-import {createLoupe, moveLoupe, updateLoupePixelColors, getMiddlePixelColor} from './Loupe';
-import {createColorBox, updateColorBox} from './ColorBox';
-import {createScreenshot, updateScreenshot, getColorData} from './Screenshot';
-import {createDiv, appendChildren} from '../utils/dom';
-import {addBrandColorsToArray} from '../utils/color';
-import MESSAGE_TYPES from '../constants/message_types';
+import { createLoupe, updateLoupePixelColors, getMiddlePixelColor } from './Loupe';
+import { createColorBox, updateColorBox } from './ColorBox';
+import { createScreenshot, updateScreenshot, getColorData } from './Screenshot';
+import { createDiv, appendChildren } from '../utils/dom';
+import { addBrandColorsToArray } from '../utils/color';
+import { requestScreenshot, processExtensionMessage } from '../utils/chrome';
+import PLATFORMS from '../constants/platforms';
 
-function App() {
+function App(options = {}) {
   const SIZE = 5;
   const PREFIX = 'spongyEyeDropper';
   const APP = createDiv(PREFIX);
   let isAppActive = false;
-  let brandColors = [];
 
   const ui = createDiv(`${PREFIX}Container`);
   const loupe = createLoupe(PREFIX, SIZE);
   const colorBox = createColorBox(PREFIX);
   const screenshot = createScreenshot(PREFIX);
 
-  chrome.runtime.onMessage.addListener(processExtensionMessage);
+  // Set brand colors
+  let brandColors = [];
+  if (options.colors) {
+    configure(options.colors);
+  }
+
+  let requestScreenshotFunc;
+
+  if (options.platform) {
+    switch (options.platform) {
+      case PLATFORMS.CHROME:
+      default: {
+        setDefault();
+      }
+    }
+  } else {
+    setDefault();
+  }
+
+  /**
+   * Set default screenshot request and processing functions to Chrome.
+   */
+  function setDefault() {
+    requestScreenshotFunc = requestScreenshot;
+    chrome.runtime.onMessage.addListener(processExtensionMessage(getScreenshotData));
+  }
 
   /**
    * Function to configure brand color data of App.
@@ -27,35 +52,29 @@ function App() {
    *
    */
   function configure(data) {
+    // Reset brand colors
+    brandColors = [];
+
+    // Then add new brand color data
     addBrandColorsToArray(brandColors, data);
   }
 
   /**
-   * Handle messages from extension.
+   * Handle getting screenshot data.
    *
-   * @param {object} message Message object sent by extension.
-   * @param {MESSAGE_TYPES} message.type Type of message.
-   * @param {string} message.data Data sent in message.
+   * @param {string} screenshotData Raw screenshot image data.
    * @callback
    */
-  function processExtensionMessage(message) {
-    switch (message.type) {
-      case MESSAGE_TYPES.SCREENSHOT_DATA: {
-        updateScreenshot(screenshot, message.data);
+  function getScreenshotData(screenshotData) {
+    updateScreenshot(screenshot, screenshotData);
 
-        // If no brand colors were configured, add in IBM Design Colors.
-        if (brandColors.length === 0) {
-          configure(IBMColors.palettes);
-        }
+    // If no brand colors were configured, add in IBM Design Colors.
+    if (brandColors.length === 0) {
+      configure(IBMColors.palettes);
+    }
 
-        if (!isAppActive) {
-          activate();
-        }
-        break;
-      }
-      default: {
-        console.error('[EYEDROPPER] Extention message not recognized', request);
-      }
+    if (!isAppActive) {
+      activate();
     }
   }
 
@@ -66,9 +85,7 @@ function App() {
    */
   function refresh() {
     removeUI();
-    chrome.runtime.sendMessage(null, {type: MESSAGE_TYPES.SCREENSHOT_REQUEST}, () => {
-      appendUI();
-    });
+    requestScreenshotFunc(appendUI);
   }
 
 
@@ -107,7 +124,7 @@ function App() {
   /**
    * Append main App element from document body.
    */
-  function appendUI () {
+  function appendUI() {
     document.body.appendChild(APP);
   }
 
@@ -180,19 +197,20 @@ function App() {
    * @callback
    */
   function handleKeyCommand(event) {
-    const {keyCode} = event;
+    const { keyCode } = event;
     event.preventDefault();
 
     switch (keyCode) {
       // Deactivate extension with <esc> key
-      case 27:
+      case 27: {
         deactivate();
         break;
-
+      }
       // Reload extension with <R> key
-      case 82:
+      case 82: {
         refresh();
         break;
+      }
       default:
     }
   }

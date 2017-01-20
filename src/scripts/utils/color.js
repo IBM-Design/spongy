@@ -25,9 +25,9 @@ function hexColorToRgb(hexColor) {
  */
 function rgbColorStringToArray(rgbColorString) {
   const rgbColorArray = rgbColorString.match(/\((\d{1,3}),\s?(\d{1,3}),\s?(\d{1,3})\)/);
-  const red = parseInt(rgbColorArray[1]);
-  const green = parseInt(rgbColorArray[2]);
-  const blue = parseInt(rgbColorArray[3]);
+  const red = parseInt(rgbColorArray[1], 10);
+  const green = parseInt(rgbColorArray[2], 10);
+  const blue = parseInt(rgbColorArray[3], 10);
 
   return [red, green, blue];
 }
@@ -241,7 +241,7 @@ function addBrandColorsToArray(targetArray, data) {
     for (const colorValue of colorsObject.values) {
       const {name, grade, value} = colorValue;
       const colorObjectValue = {
-        grade: parseInt(grade),
+        grade: parseInt(grade, 10),
         hex: normalizeHexString(value),
         rgb: hexColorToRgb(value),
         name: name || colorsObject.name,
