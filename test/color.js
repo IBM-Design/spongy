@@ -5,38 +5,42 @@ import * as IBMColors from '../node_modules/ibm-design-colors/source/colors';
 import {
   hexColorToRgb,
   rgbColorToHex,
+  rgbColorToHsl,
   normalizeHexString,
   colorContrast,
-  matchScore,
+  rgbDistance,
   getMatchingBrandColor,
   rgbColorStringToArray,
   addBrandColorsToArray,
 } from '../src/scripts/utils/color';
+import { roundToDecimal } from '../src/scripts/utils/math';
+import testColors from './resources/colors';
+import testColorContrastRatios from './resources/color-contrast-ratios';
 
 
 describe('utils.color', () => {
   describe('#rgbColorToHex', () => {
-    const color = [255, 255, 255];
-
-    it('should return #FFFFFF', () => {
-      assert.strictEqual(rgbColorToHex(color), '#FFFFFF');
-    });
-
-    it('should not return #BADA55', () => {
-      assert.notStrictEqual(rgbColorToHex(color), '#BADA55');
-    });
+    for (const color of testColors) {
+      it(`should return ${color.hex}`, () => {
+        assert.strictEqual(rgbColorToHex(color.rgb), color.hex);
+      });
+    }
   });
 
   describe('#hexColorToRgb', () => {
-    const color = '#FFFFFF';
+    for (const color of testColors) {
+      it(`should return [${color.rgb.join(', ')}]`, () => {
+        assert.deepEqual(hexColorToRgb(color.hex), color.rgb);
+      });
+    }
+  });
 
-    it('should return [255, 255, 255]', () => {
-      assert.deepEqual(hexColorToRgb(color), [255, 255, 255]);
-    });
-
-    it('should not return [55, 140, 5]', () => {
-      assert.notDeepEqual(hexColorToRgb(color), [55, 140, 5]);
-    });
+  describe('#rgbColorToHsl', () => {
+    for (const color of testColors) {
+      it(`should return [${color.hsl.join(', ')}]`, () => {
+        assert.deepEqual(rgbColorToHsl(color.rgb), color.hsl);
+      })
+    }
   });
 
   describe('#normalizeHexString', () => {
@@ -58,49 +62,46 @@ describe('utils.color', () => {
     });
   });
 
-  describe('#colorContrast', () => {
-    const baseColor = '#FFFFFF';
 
-    const colors = [
-      { hex: '#000000', ratio: 21 },
-      { hex: '#330000', ratio: 18.4 },
-      { hex: '#333300', ratio: 13 },
-      { hex: '#003300', ratio: 14.3 },
-      { hex: '#000033', ratio: 20 },
-      { hex: '#330033', ratio: 17.7 },
-      { hex: '#660000', ratio: 13.4 },
-      { hex: '#663300', ratio: 10.3 },
-      { hex: '#666600', ratio: 6.1 },
-      { hex: '#555555', ratio: 7.5 },
-      { hex: '#FF0000', ratio: 4 },
-      { hex: '#00FF00', ratio: 1.4 },
-      { hex: '#FFFFFF', ratio: 1 },
-      { hex: '#3366FF', ratio: 4.7 },
-    ];
-
-    for (const color of colors) {
-      it(`should return ${color.ratio} when color is ${color.hex}`, () => {
-        assert.strictEqual(colorContrast(baseColor, color.hex), color.ratio);
+  describe('#rgbColorStringToArray', () => {
+    for (const color of testColors) {
+      it(`should return [${color.rgb.join(', ')}]`, () => {
+        assert.deepEqual(rgbColorStringToArray(`rgb(${color.rgb.join(',')})`), color.rgb);
       });
     }
   });
 
-  describe('#matchScore', () => {
-    const color = [255, 255, 255];
 
-    it('should return 0.00', () => {
-      const testColor = [0, 0, 0];
-      assert.strictEqual(roundToHundreds(matchScore(color, testColor)), 0.00);
-    });
+  describe('#colorContrast', () => {
+    const white = '#FFFFFF';
+    for (const color of testColorContrastRatios) {
+      it(`should return ${color.white} when color is ${color.hex}`, () => {
+        assert.strictEqual(colorContrast(white, color.hex), color.white);
+      });
+    }
 
-    it('should return 0.36', () => {
-      const testColor = [44, 79, 155];
-      assert.strictEqual(roundToHundreds(matchScore(color, testColor)), 0.36);
-    });
+    const black = '#000000';
+    for (const color of testColorContrastRatios) {
+      it(`should return ${color.black} when color is ${color.hex}`, () => {
+        assert.strictEqual(colorContrast(black, color.hex), color.black);
+      });
+    }
+  });
 
-    it('should return 0.90', () => {
-      const testColor = [225, 228, 234];
-      assert.strictEqual(roundToHundreds(matchScore(color, testColor)), 0.90);
+  describe('Color Distance', () => {
+    const rgb = [255, 255, 255];
+    it('should return proper RGB Distance', () => {
+      let testColor = [0, 0, 0];
+      assert.strictEqual(roundToDecimal(rgbDistance(rgb, testColor), 2), 1);
+
+      testColor = [255, 255, 255];
+      assert.strictEqual(roundToDecimal(rgbDistance(rgb, testColor), 2), 0);
+
+      testColor = [44, 79, 155];
+      assert.strictEqual(roundToDecimal(rgbDistance(rgb, testColor), 2), 0.65);
+
+      testColor = [225, 228, 234];
+      assert.strictEqual(roundToDecimal(rgbDistance(rgb, testColor), 2), 0.1);
     });
   });
 
@@ -116,6 +117,7 @@ describe('utils.color', () => {
         for (const colorValue of palette.values) {
           const colorArray = hexColorToRgb(normalizeHexString(colorValue.value));
           const color = getMatchingBrandColor(colorArray, confidenceThreshold, brandColors);
+
           assert.deepEqual(color, {
             grade: parseInt(colorValue.grade, 10),
             name: getCoolGraySynonym(palette.name, colorValue.grade),
@@ -126,10 +128,12 @@ describe('utils.color', () => {
       }
     });
 
-    it('should test all color images ', (done) => {
+    // Test color images with different JPG qualities
+    it('should match all color images', (done) => {
       const COLOR_HEIGHT = 50;
-      // Create brand colors iterator.
+
       for (let quality = 40; quality <= 100; quality += 10) {
+        // Create brand colors iterator.
         const brandColors = [];
         addBrandColorsToArray(brandColors, IBMColors.palettes);
 
@@ -148,13 +152,21 @@ describe('utils.color', () => {
             const rgbaColor = Jimp.intToRGBA(pixelColor);
             const color = getMatchingBrandColor([rgbaColor.r, rgbaColor.g, rgbaColor.b], confidenceThreshold, brandColors);
             const brandColor = brandColors[yIndex];
-            brandColor.name = getCoolGraySynonym(brandColor.name);
+
+            brandColor.name = getCoolGraySynonym(brandColor.name, brandColor.grade);
 
             color.quality = quality;
             brandColor.quality = quality;
 
             color.index = yIndex * COLOR_HEIGHT;
             brandColor.index = yIndex * COLOR_HEIGHT;
+
+            if ((brandColor.name !== color.name) || (brandColor.grade !== color.grade)) {
+              console.log('tested color', rgbaColor);
+              console.log('exprected', brandColor);
+              console.log('actual', color);
+              console.log('\n\n');
+            }
 
             assert.deepEqual(color, brandColor);
           }
@@ -172,7 +184,7 @@ describe('utils.color', () => {
       let color = getMatchingBrandColor([253, 214, 0], confidenceThreshold, brandColors);
       assert.deepEqual(color, { grade: 10, name: 'yellow', hex: '#FED500', rgb: [254, 213, 0] });
 
-      color = getMatchingBrandColor([230, 86, 165], confidenceThreshold, brandColors);
+      color = getMatchingBrandColor([240, 86, 165], confidenceThreshold, brandColors);
       assert.deepEqual(color, { grade: 40, name: 'magenta', hex: '#FF509E', rgb: [255, 80, 158] });
     });
 
@@ -182,17 +194,6 @@ describe('utils.color', () => {
       assert.strictEqual(color, null);
     });
   });
-
-  describe('#rgbColorStringToArray', () => {
-    it('should return [12, 0, 250]', () => {
-      assert.deepEqual(rgbColorStringToArray('rgb(12, 0, 250)'), [12, 0, 250]);
-    });
-
-    it('should return [12, 0, 250]', () => {
-      assert.deepEqual(rgbColorStringToArray('rgb(12,0,250)'), [12, 0, 250]);
-    });
-  });
-
 });
 
 function getCoolGraySynonym(name, grade) {
@@ -201,8 +202,4 @@ function getCoolGraySynonym(name, grade) {
     return 'gray';
   }
   return name;
-}
-
-function roundToHundreds(number) {
-  return Math.round(number * 100) / 100;
 }

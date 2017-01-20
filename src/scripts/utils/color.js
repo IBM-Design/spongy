@@ -1,3 +1,5 @@
+import * as d3 from 'd3-color';
+import { roundToDecimal } from './math';
 /**
  * Turn a hexadecimal color value into an array of red, green, blue values in base 10.
  *
@@ -8,9 +10,9 @@
 function hexColorToRgb(hexColor) {
   const normalizedHexColor = normalizeHexString(hexColor);
 
-  const red = parseInt(normalizedHexColor.substr((1), 2), 16);
-  const green = parseInt(normalizedHexColor.substr((3), 2), 16);
-  const blue = parseInt(normalizedHexColor.substr((5), 2), 16);
+  const red = parseInt(normalizedHexColor.substr(1, 2), 16);
+  const green = parseInt(normalizedHexColor.substr(3, 2), 16);
+  const blue = parseInt(normalizedHexColor.substr(5, 2), 16);
 
   return [red, green, blue];
 }
@@ -49,6 +51,56 @@ function rgbColorToHex(rgbColor) {
 
   return normalizeHexString(hexColorArray.join(''));
 }
+
+/**
+ * Turn a red, green, blue array color into hue saturation lightness format.
+ *
+ * @param {number[]} rgbColor Array of red, green, blue values of color to be converted.
+ * @returns {number[]} Array of HSL values.
+ * @public
+ */
+function rgbColorToHsl(rgbColor) {
+  const MAX_CHANNEL_VALUE = 255;
+  const rgb = rgbColor.map((channel) => {
+    return channel / MAX_CHANNEL_VALUE;
+  });
+
+  const red = rgb[0];
+  const green = rgb[1];
+  const blue = rgb[2];
+
+  const max = Math.max(...rgb);
+  const min = Math.min(...rgb);
+  const delta = max - min;
+
+  const lightness = (max + min) / 2;
+
+  if (max === min) {
+    return [0, 0, roundToDecimal(lightness, 2)];
+  }
+
+  const saturation =  lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+
+  let hue;
+  switch (max) {
+    case red: {
+      hue = ((green - blue) / delta) + (green >= blue ? 0 : 6);
+      break;
+    }
+    case green: {
+      hue = ((blue - red) / delta) + 2;
+      break;
+    }
+    case blue: {
+      hue = ((red - green) / delta) + 4;
+      break;
+    }
+  }
+  hue *= 60;
+
+  return [hue, roundToDecimal(saturation, 2), roundToDecimal(lightness, 2)];
+}
+
 
 /**
  * Normalize a given string into a hexadecimal color value format by adding a #, doubling 3 character hexadecimal
@@ -158,7 +210,7 @@ function colorContrast(colorOne, colorTwo) {
   const rawRatio = (lightest + 0.05) / (darkest + 0.05);
 
   // Round up to single decimal place
-  return Math.round(rawRatio * 10) / 10;
+  return roundToDecimal(rawRatio, 1);
 }
 
 /**
@@ -173,19 +225,27 @@ function getVisibleTextColor(hexBackgroundColor) {
 
 
 /**
- * Generate a score based on how closely two colors match from scale of 0 to 1. 1 means an exact match.
+ * Get Eucledian Distance between two RGB colors.
  *
- * @param {number[]} colorOneRgbArray Color to test to match.
- * @param {number[]} colorTwoRgbArray Color to test to match.
- * @returns {number} Score from 0 to 1 of how closely two colors match.
+ * @param {number[]} colorOneRgbArray Color to get distance with.
+ * @param {number[]} colorTwoRgbArray Color to get distance with.
+ * @returns {number} Eucledian distance.
  * @public
  */
-function matchScore(colorOneRgbArray, colorTwoRgbArray) {
-  const rawScore = colorOneRgbArray.reduce((score, channel, channelIndex) => {
-    return score += Math.abs(channel - colorTwoRgbArray[channelIndex]);
+function rgbDistance(colorOneRgbArray, colorTwoRgbArray) {
+  // Return 0 if the colors are identical
+  if ((colorOneRgbArray[0] === colorTwoRgbArray[0])
+    && (colorOneRgbArray[1] === colorTwoRgbArray[1])
+    && (colorOneRgbArray[2] === colorTwoRgbArray[2])) {
+    return 0;
+  }
+
+  const MAX_DISTANCE = Math.sqrt(Math.pow(255, 2) * 3);
+  const rawDistance = colorOneRgbArray.reduce((d, channel, channelIndex) => {
+    return d += Math.pow((channel - colorTwoRgbArray[channelIndex]), 2);
   }, 0);
 
-  return 1 - (rawScore / (255 * 3));
+  return Math.sqrt(rawDistance) / MAX_DISTANCE;
 }
 
 
@@ -193,23 +253,27 @@ function matchScore(colorOneRgbArray, colorTwoRgbArray) {
  * Get IBM color match of color RGB array.
  *
  * @param {number[]} rgbColorArray Array of red, green, blue values of color to be matched.
+ * @param {number} confidenceThreshold 0 to 1 float that determines the flexibility of color matching. 1 equals exact
+ * match only.
+ * @param {object[]} brandColors Brand colors to match from.
  * @returns {object|boolean} The IBM color object.
  * @public
  */
 function getMatchingBrandColor(rgbColorArray, confidenceThreshold, brandColors) {
-  // Instantiate result and current match score variables.
+  // Instantiate result and current distance variables.
   let result = null;
-  let currentMatchScore = -1;
+  let currentDistance = 1;
+  const hslColorArray = rgbColorToHsl(rgbColorArray);
 
   // Iterate over brand colors.
   for (const brandColor of brandColors) {
-    const score = matchScore(rgbColorArray, brandColor.rgb);
+    const distance = rgbDistance(rgbColorArray, brandColor.rgb);
 
-    // If score is higher than current match score and it passes the confidence threshold then set the current match to
+    // If distance is higher than current match distance and it passes the confidence threshold then set the current match to
     // this brand color.
-    if ((score > currentMatchScore) && (score >= confidenceThreshold)) {
+    if ((distance <= (1 - confidenceThreshold)) && (distance < currentDistance)) {
       result = brandColor;
-      currentMatchScore = score;
+      currentDistance = distance;
     }
   }
 
@@ -240,10 +304,11 @@ function addBrandColorsToArray(targetArray, data) {
   for (const colorsObject of data) {
     for (const colorValue of colorsObject.values) {
       const {name, grade, value} = colorValue;
+      const rgb = hexColorToRgb(value);
       const colorObjectValue = {
         grade: parseInt(grade, 10),
         hex: normalizeHexString(value),
-        rgb: hexColorToRgb(value),
+        rgb,
         name: name || colorsObject.name,
       }
 
@@ -257,10 +322,11 @@ export {
   hexColorToRgb,
   rgbColorStringToArray,
   rgbColorToHex,
+  rgbColorToHsl,
   normalizeHexString,
   colorContrast,
   getVisibleTextColor,
-  matchScore,
+  rgbDistance,
   getMatchingBrandColor,
   addBrandColorsToArray,
 };

@@ -25,6 +25,7 @@
     "url": "https://github.com/IBM-Design/spongy/issues"
   },
   "dependencies": {
+    "d3-color": "^1.0.2",
     "ibm-design-colors": "^2.0.1"
   },
   "devDependencies": {
