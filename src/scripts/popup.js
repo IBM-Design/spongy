@@ -1,3 +1,3 @@
-import {sendScreenshot} from './utils/extension';
+import {sendScreenshot} from './utils/chrome';
 
 sendScreenshot();

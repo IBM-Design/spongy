@@ -1,6 +1,6 @@
 {
   "name": "spongy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Google Chrome color picker for brand colors and grades",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,8 @@
     "url": "https://github.com/IBM-Design/spongy/issues"
   },
   "dependencies": {
-    "ibm-design-colors": "^2.0.1"
+    "d3-color": "^1.0.2",
+    "ibm-design-colors": "^2.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
@@ -37,6 +38,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
     "gulp-svg2png": "^2.0.2",
+    "jimp": "^0.2.27",
     "mocha": "^3.2.0",
     "webpack-stream": "^3.2.0"
   }
