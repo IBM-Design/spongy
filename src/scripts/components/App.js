@@ -13,10 +13,10 @@ function App(options = {}) {
   const APP = createDiv(PREFIX);
   let isAppActive = false;
 
-  const ui = createDiv(`${PREFIX}-container`, 'container');
-  const loupe = createLoupe(SIZE);
-  const colorBox = createColorBox();
-  const screenshot = createScreenshot();
+  const ui = createDiv(`${PREFIX}-container`);
+  const loupe = createLoupe(SIZE, PREFIX);
+  const colorBox = createColorBox(PREFIX);
+  const screenshot = createScreenshot(PREFIX);
 
   // Set brand colors
   let brandColors = [];

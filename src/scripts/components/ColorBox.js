@@ -1,50 +1,74 @@
-import {createDiv, createSpan, createTextInput, appendChildren} from '../utils/dom';
-import {rgbColorToHex, normalizeHexString, colorContrast, getVisibleTextColor, getMatchingBrandColor} from '../utils/color';
+import {createDiv, createParagraph, createTextInput, appendChildren} from '../utils/dom';
+import {hexColorToRgb, rgbColorToHex, normalizeHexString, colorContrast, getVisibleTextColor, getMatchingBrandColor} from '../utils/color';
 
 /**
  * Create Color Box element.
  *
+ * @param {string} prefix Namespaced prefix for element ids.
  * @public
  */
-function createColorBox() {
-  const className = 'color-box';
-  const container = createDiv(null, className);
-  const brandInput = createTextInput(null, `${className}__brand`);
-  const color = createSpan(null, `${className}__color`);
-  brandInput.placeholder = 'No match';
+function createColorBox(prefix = '') {
+  const id = `${prefix}-color-box`;
+  const container = createDiv(id);
+  const brand = createBrandElement(id);
+  const rgb = createParagraph(`${id}__color--rgb`, `${id}__color`, `${id}__color--rgb`);
+  const hex = createParagraph(`${id}__color--hex`, `${id}__color`, `${id}__color--hex`);
 
-  appendChildren(container, brandInput, color);
+  appendChildren(container, brand, rgb, hex);
 
   return {
     container,
-    brandInput,
-    color,
+    brand,
+    rgb,
+    hex,
   };
+}
+
+/**
+ * Create brand color element.
+ *
+ * @param {string} prefix Namespaced prefix for element ids.
+ */
+function createBrandElement(prefix) {
+  const brand = createTextInput(`${prefix}__brand`);
+  brand.placeholder = 'No match';
+  brand.size = 17;
+  brand.addEventListener('keypress', (event) => { event.preventDefault(); });
+
+  return brand;
 }
 
 /**
  * Updates the text inside the Color Cox with the data of the selected color and matching brand color.
  *
  * @param {object} colorBox Color box elements object.
- * @param {HTMLElement} colorBox.color Color box hex color element.
- * @param {HTMLElement} colorBox.brandInput Color box brand color brand input text element.
+ * @param {HTMLElement} colorBox.rgb Color box rgb color element.
+ * @param {HTMLElement} colorBox.hex Color box hex color element.
+ * @param {HTMLElement} colorBox.brand Color box brand color brand input text element.
  * @param {string} hexColor Selected color value in hexadecimal format.
  * @param {object} brandColor Object that contains data about the matched brand color.
  * @param {string} brandColor.name Name of the brand color.
  * @param {string} brandColor.grade Grade of the brand color.
  */
 function updateColorBoxText(colorBox, hexColor, brandColor) {
-  const {color, brandInput} = colorBox;
+  const {rgb, hex, brand} = colorBox;
 
-  let brandInputText = '';
+  let brandText = '';
 
   if (brandColor) {
-    brandInputText = `'${brandColor.name}', ${brandColor.grade}`;
+    brandText = `'${brandColor.name}', ${brandColor.grade}`;
   }
 
-  color.textContent = normalizeHexString(hexColor);
-  brandInput.value = brandInputText;
-  brandInput.select();
+  rgb.textContent = `RGB ${hexColorToRgb(hexColor).join(', ')}`;
+  hex.textContent = `HEX ${normalizeHexString(hexColor)}`;
+
+  brand.value = brandText;
+  
+  if (brandText.length) {
+    brand.select();
+  } else {
+    brand.blur();
+  }
 }
 
 
@@ -53,25 +77,25 @@ function updateColorBoxText(colorBox, hexColor, brandColor) {
  *
  * @param {object} colorBox Color box elements object.
  * @param {HTMLElement} colorBox.container Color box container element.
- * @param {HTMLElement} colorBox.color Color box hex color element.
- * @param {HTMLElement} colorBox.brandInput Color box brand color brand input text element.
+ * @param {HTMLElement} colorBox.hex Color box hex color element.
+ * @param {HTMLElement} colorBox.brand Color box brand color brand input text element.
  * @param {number[]} colorData Array of RGB data of color to be evaluated for brand color matches and used to color the
  * Color Box.
  * @public
  */
 function updateColorBox(colorBox, colorData, brandColors) {
-  const {container, brandInput} = colorBox;
+  const {container, brand} = colorBox;
   const rgbColor = Array.from(colorData);
   const hexColor = rgbColorToHex(rgbColor);
   const matchingBrandColor = getMatchingBrandColor(rgbColor, 0.95, brandColors);
-  const textColor = getVisibleTextColor(hexColor);
+  const textColor = getVisibleTextColor(hexColor, '#323232');
 
+  container.style.display = 'block';
   container.style.backgroundColor = hexColor;
   container.style.color = textColor;
-  brandInput.style.color = textColor;
+  brand.style.color = textColor;
 
   updateColorBoxText(colorBox, hexColor, matchingBrandColor);
-  container.style.display = 'block';
 }
 
 

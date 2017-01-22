@@ -1,12 +1,9 @@
 @import '../../node_modules/ibm-design-colors/_ibm-colors.scss';
 @import 'fonts';
-
-$base-z: 100000;
-$box-shadow: 0 0 10px rgba(40, 40, 40, 0.3);
-$border: 3px solid #FFF;
-$prefix: 'spongy-app';
+@import 'variables';
 
 ##{$prefix} {
+  @import 'reset';
   @import 'container';
   @import 'canvas';
   @import 'loupe';
@@ -22,6 +19,7 @@ $prefix: 'spongy-app';
 
   font-family: 'HelvIBM', helvetica, arial, sans-serif !important;
   font-weight: 400 !important;
+  text-align: left;
 
   cursor: crosshair;
 }

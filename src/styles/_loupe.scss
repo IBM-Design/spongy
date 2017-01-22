@@ -1,4 +1,4 @@
-.loupe {
+&-loupe {
   height: 120px;
   width: 120px;
   overflow: hidden;
@@ -10,7 +10,7 @@
   border-radius: 50%;
   box-shadow: $box-shadow;
 
-  &__pixel {
+  & .#{$prefix}-loupe__pixel {
     margin: 0;
     padding: 0;
     box-shadow: 0 0 0 1px rgba(40, 40, 40, 0.3);

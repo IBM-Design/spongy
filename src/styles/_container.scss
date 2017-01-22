@@ -1,8 +1,16 @@
-.container {
+&-container {
   width: auto;
   height: auto;
+  margin: 0;
+  padding: 0;
+
   display: flex;
   align-items: center;
+
   position: absolute;
   z-index: 1;
+
+  text-align: left;
+
+  background: transparent;
 }

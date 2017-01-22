@@ -3,10 +3,11 @@ import {createElement} from '../utils/dom';
 /**
  * Create Screenshot element.
  *
+ * @param {string} prefix Namespaced prefix for element ids.
  * @public
  */
-function createScreenshot() {
-  const container = createElement('canvas', null, 'canvas');
+function createScreenshot(prefix = '') {
+  const container = createElement('canvas', `${prefix}-canvas`);
   const context = container.getContext('2d');
   const image = new Image();
 

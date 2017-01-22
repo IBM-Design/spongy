@@ -1,14 +1,16 @@
-.color-box {
+&-color-box {
   display: none;
   min-height: 3em;
-  margin-left: -1.8em;
+  margin-left: -2em;
   padding: 0.8em;
-  padding-left: 3em;
+  padding-left: 2.9em;
   min-width: 8em;
   z-index: -1;
 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-family: sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.2;
 
   border: $border;
@@ -17,33 +19,40 @@
   box-shadow: $box-shadow;
 
   &__color {
-    display: block;
+    &--rgb,
+    &--hex {
     font-size: inherit;
     font-family: inherit;
+
+      &.#{$prefix}-color-box__color {
+        &--rgb {
+          margin-bottom: 0.4em;
+        }
+      }
+    }
   }
 
   &__brand {
-    height: 1.1em;
-    margin: 0 0 0.3em;
+    height: 1.5em;
+    margin: 0 0 0.1em;
 
-    font-size: 1.38em;
+    font-size: 1.2667em;
     font-weight: 700;
 
     background-color: inherit;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
     border: none;
 
     &:focus {
-      outline: 2px solid lighten(color('cerulean', 30), 8%);
+      // outline: 2px solid lighten(color('cerulean', 30), 8%);
+      outline: none;
     }
 
     &::selection {
-      background-color: none;
       color: inherit;
     }
 
     &::placeholder {
-      color: color('cool-gray', 30);
+      color: inherit;
     }
   }
 }

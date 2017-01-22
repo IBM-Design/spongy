@@ -1,0 +1,15 @@
+& * {
+  margin: 0;
+  padding: 0;
+  position: static;
+
+  background: transparent;
+  line-height: 1;
+
+  &::before,
+  &::after {
+    margin: 0;
+    padding: 0;
+    display: none;
+  }
+}

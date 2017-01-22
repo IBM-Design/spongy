@@ -30,6 +30,19 @@ function createDiv(id = '', ...classNames) {
 
 
 /**
+ * Create a P HTML element.
+ *
+ * @param {string} id The ID to be applied to the P.
+ * @param {...string} classNames The class names to be applied to the P.
+ * @returns {HTMLElement} The newly created P.
+ * @public
+ */
+function createParagraph(id = '', ...classNames) {
+  return createElement('p', id, ...classNames);
+}
+
+
+/**
  * Create a SPAN HTML element.
  *
  * @param {string} id The ID to be applied to the SPAN.
@@ -74,6 +87,7 @@ function appendChildren(container, ...children) {
 export {
   createElement,
   createDiv,
+  createParagraph,
   createSpan,
   createTextInput,
   appendChildren,
