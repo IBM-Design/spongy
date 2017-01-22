@@ -1,0 +1,23 @@
+.loupe {
+  height: 120px;
+  width: 120px;
+  overflow: hidden;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  border: $border;
+  border-radius: 50%;
+  box-shadow: $box-shadow;
+
+  &__pixel {
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 0 0 1px rgba(40, 40, 40, 0.3);
+
+    &--middle {
+      position: relative;
+      box-shadow: 0 0 0 2px rgba(40, 40, 40, 0.5);
+    }
+  }
+}

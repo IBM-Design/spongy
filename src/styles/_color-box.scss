@@ -1,0 +1,49 @@
+.color-box {
+  display: none;
+  min-height: 3em;
+  margin-left: -1.8em;
+  padding: 0.8em;
+  padding-left: 3em;
+  min-width: 8em;
+  z-index: -1;
+
+  font-family: sans-serif;
+  font-size: 14px;
+  line-height: 1.2;
+
+  border: $border;
+  border-radius: 0.3em;
+  box-sizing: content-box;
+  box-shadow: $box-shadow;
+
+  &__color {
+    display: block;
+    font-size: inherit;
+    font-family: inherit;
+  }
+
+  &__brand {
+    height: 1.1em;
+    margin: 0 0 0.3em;
+
+    font-size: 1.38em;
+    font-weight: 700;
+
+    background-color: inherit;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    border: none;
+
+    &:focus {
+      outline: 2px solid lighten(color('cerulean', 30), 8%);
+    }
+
+    &::selection {
+      background-color: none;
+      color: inherit;
+    }
+
+    &::placeholder {
+      color: color('cool-gray', 30);
+    }
+  }
+}

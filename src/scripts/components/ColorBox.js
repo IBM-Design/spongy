@@ -4,21 +4,21 @@ import {rgbColorToHex, normalizeHexString, colorContrast, getVisibleTextColor, g
 /**
  * Create Color Box element.
  *
- * @param {string} prefix The prefix than can be applied to the ID of the Color Box to namespace it.
  * @public
  */
-function createColorBox(prefix = '') {
-  const container = createDiv(`${prefix}ColorBox`);
-  const color = createSpan(`${prefix}ColorText`);
-  const brandInput = createTextInput(`${prefix}BrandText`);
+function createColorBox() {
+  const className = 'color-box';
+  const container = createDiv(null, className);
+  const brandInput = createTextInput(null, `${className}__brand`);
+  const color = createSpan(null, `${className}__color`);
   brandInput.placeholder = 'No match';
 
-  appendChildren(container, color, brandInput);
+  appendChildren(container, brandInput, color);
 
   return {
     container,
-    color,
     brandInput,
+    color,
   };
 }
 
@@ -60,15 +60,18 @@ function updateColorBoxText(colorBox, hexColor, brandColor) {
  * @public
  */
 function updateColorBox(colorBox, colorData, brandColors) {
-  const {container} = colorBox;
+  const {container, brandInput} = colorBox;
   const rgbColor = Array.from(colorData);
   const hexColor = rgbColorToHex(rgbColor);
   const matchingBrandColor = getMatchingBrandColor(rgbColor, 0.95, brandColors);
+  const textColor = getVisibleTextColor(hexColor);
 
   container.style.backgroundColor = hexColor;
-  container.style.color = getVisibleTextColor(hexColor);
-  container.classList.add('active');
+  container.style.color = textColor;
+  brandInput.style.color = textColor;
+
   updateColorBoxText(colorBox, hexColor, matchingBrandColor);
+  container.style.display = 'block';
 }
 
 

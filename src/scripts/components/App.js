@@ -9,14 +9,14 @@ import PLATFORMS from '../constants/platforms';
 
 function App(options = {}) {
   const SIZE = 5;
-  const PREFIX = 'spongyEyeDropper';
+  const PREFIX = 'spongy-app';
   const APP = createDiv(PREFIX);
   let isAppActive = false;
 
-  const ui = createDiv(`${PREFIX}Container`);
-  const loupe = createLoupe(PREFIX, SIZE);
-  const colorBox = createColorBox(PREFIX);
-  const screenshot = createScreenshot(PREFIX);
+  const ui = createDiv(`${PREFIX}-container`, 'container');
+  const loupe = createLoupe(SIZE);
+  const colorBox = createColorBox();
+  const screenshot = createScreenshot();
 
   // Set brand colors
   let brandColors = [];

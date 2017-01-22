@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Spongy",
   "author": "Diego Hernandez",
-  "version": "0.0.3",
+  "version": "0.0.4",
 
   "description": "Google Chrome color picker for brand colors and grades",
 
@@ -32,6 +32,9 @@
     "matches": ["http://*/*", "https://*/*"],
     "js": ["dist/scripts/main.js"],
     "css": ["dist/styles/main.css"]
-  }]
+  }],
 
+  "web_accessible_resources": [
+    "fonts/*"
+  ]
 }

@@ -3,11 +3,10 @@ import {createElement} from '../utils/dom';
 /**
  * Create Screenshot element.
  *
- * @param {string} prefix The prefix than can be applied to the ID of the Screenshot to namespace it.
  * @public
  */
-function createScreenshot(prefix = '') {
-  const container = createElement('canvas', `${prefix}Canvas`);
+function createScreenshot() {
+  const container = createElement('canvas', null, 'canvas');
   const context = container.getContext('2d');
   const image = new Image();
 

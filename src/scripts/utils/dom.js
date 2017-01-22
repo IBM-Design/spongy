@@ -9,7 +9,7 @@
  */
  function createElement(tagName ='div', id = '', ...classNames) {
   const element = document.createElement(tagName);
-  element.id = id;
+  element.id = id || '';
   element.classList.add(...classNames);
 
   return element;
