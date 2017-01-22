@@ -122,7 +122,7 @@ function normalizeHexString(hexString) {
     result = `#${result[1]}${result[1]}${result[2]}${result[2]}${result[3]}${result[3]}`
   }
 
-  return result.substr(0, 7).toUpperCase();
+  return result.substr(0, 7).toLowerCase();
 }
 
 

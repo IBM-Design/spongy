@@ -17,8 +17,8 @@
   left: 0;
   z-index: $base-z;
 
-  font-family: 'HelvIBM', helvetica, arial, sans-serif !important;
-  font-weight: 400 !important;
+  font-family: $font-family;
+  font-weight: 400;
   text-align: left;
 
   cursor: crosshair;

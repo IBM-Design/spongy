@@ -1,3 +1,6 @@
+$font-family: 'HelvIBM', helvetica, arial, sans-serif;
+$dir: 'chrome-extension://__MSG_@@extension_id__/fonts';
+
 $fonts: (
   (
     'filename': 'HelvNeueRomanforIBM',
@@ -8,8 +11,6 @@ $fonts: (
     'weight': 700,
   ),
 );
-
-$dir: 'chrome-extension://__MSG_@@extension_id__/fonts';
 
 @each $font in $fonts {
  @font-face {

@@ -14,6 +14,11 @@
     margin: 0;
     padding: 0;
     box-shadow: 0 0 0 1px rgba(40, 40, 40, 0.3);
+    background-color: color('neutral-white', 1);
+
+    &:nth-of-type(2n) {
+      background-color: color('neutral-white', 4);
+    }
 
     &--middle {
       position: relative;
