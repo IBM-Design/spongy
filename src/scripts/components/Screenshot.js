@@ -7,12 +7,12 @@ import {createElement} from '../utils/dom';
  * @public
  */
 function createScreenshot(prefix = '') {
-  const container = createElement('canvas', `${prefix}-canvas`);
-  const context = container.getContext('2d');
+  const element = createElement('canvas', `${prefix}-canvas`);
+  const context = element.getContext('2d');
   const image = new Image();
 
   return {
-    container,
+    element,
     context,
     image,
   }
@@ -42,16 +42,16 @@ function width() {
  * Update the canvas and the image the screenshot represents.
  *
  * @param {object} screenshot Screenshot elements object.
- * @param {HTMLElement} screenshot.container Screenshot canvas container element.
+ * @param {HTMLElement} screenshot.element Screenshot canvas main element.
  * @param {CanvasRenderingContext2D} screenshot.context Screenshot canvas context object.
  * @param {Image} screenshot.image Screenshot image element.
  * @param {string} imageData Base64 screenshot data to be used to render canvas.
  * @public
  */
 function updateScreenshot(screenshot, imageData) {
-  const {container, context, image} = screenshot;
-  container.height = height();
-  container.width = width();
+  const {element, context, image} = screenshot;
+  element.height = height();
+  element.width = width();
   image.src = imageData;
 
   context.drawImage(image, 0, 0);

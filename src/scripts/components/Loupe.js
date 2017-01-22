@@ -10,14 +10,14 @@ import {rgbColorStringToArray} from '../utils/color';
  */
 function createLoupe(size, prefix = '') {
   const id = `${prefix}-loupe`;
-  const container = createDiv(id);
+  const element = createDiv(id);
   const pixels = createPixelsArray(id, size);
   const middlePixel = pixels[getMiddlePixelIndex(size)];
 
-  appendChildren(container, ...pixels);
+  appendChildren(element, ...pixels);
 
   return {
-    container,
+    element,
     pixels,
     middlePixel,
   };

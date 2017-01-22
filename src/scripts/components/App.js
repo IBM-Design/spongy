@@ -100,7 +100,7 @@ function App(options = {}) {
     window.addEventListener('resize', refresh);
 
     isAppActive = true;
-    appendChildren(ui, loupe.container, colorBox.container);
+    appendChildren(ui, loupe.element, colorBox.element);
     appendChildren(APP, ui);
     appendUI();
   }

@@ -1,6 +1,6 @@
 &-loupe {
-  height: 120px;
-  width: 120px;
+  height: $loupe-size;
+  width: $loupe-size;
   overflow: hidden;
 
   display: flex;
