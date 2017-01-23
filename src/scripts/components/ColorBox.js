@@ -56,13 +56,12 @@ function updateColorBoxText(colorBox, hexColor, brandColor) {
   const {rgb, hex, brand} = colorBox;
   const noMatch = 'No match';
 
-  let brandText = brandColor ? `'${brandColor.name}', ${brandColor.grade}` : noMatch;
+  const brandText = brandColor ? `'${brandColor.name}', ${brandColor.grade}` : noMatch;
   const rgbText = hexColor ? `RGB ${hexColorToRgb(hexColor).join(', ')}` : '';
   const hexText = hexColor ? `HEX ${normalizeHexString(hexColor)}` : '';
 
   rgb.textContent = rgbText;
   hex.textContent = hexText;
-
   brand.value = brandText;
 
   if (brandText !== noMatch) {
