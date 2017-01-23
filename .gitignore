@@ -1,6 +1,7 @@
 node_modules
 fonts
 dist
+spongy.zip
 npm-debug.log
 *.pem
 .DS_Store
