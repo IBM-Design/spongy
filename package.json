@@ -1,12 +1,12 @@
 {
   "name": "spongy",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Google Chrome color picker for brand colors and grades",
   "main": "index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",
     "start": "gulp",
-    "build": "gulp build"
+    "build": "gulp build && zip -r spongy.zip . -x \".*\" -x \"*/.*\""
   },
   "repository": {
     "type": "git",
