@@ -1,15 +1,19 @@
+@import '../../node_modules/ibm-design-colors/_ibm-colors.scss';
+@import 'fonts';
+
 body {
-  font-family: sans-serif;
-  min-width: 11rem;
+  min-width: 15rem;
+  font-family: $font-family;
+  color: color('cool-gray', 90);
 }
 
-.keyboard-key {
+kbd {
   display: inline-block;
   padding: 0.2em 0.5em;
   position: relative;
   top: -0.2em;
 
-  background-color: #E8E8E8;
+  background-color: color('gray', 1);
   border-radius: 0.3em;
-  box-shadow: 0 3px 0 #DDD;
+  box-shadow: 0 3px 0 color('gray', 20);
 }

@@ -9,12 +9,12 @@ import PLATFORMS from '../constants/platforms';
 
 function App(options = {}) {
   const SIZE = 5;
-  const PREFIX = 'spongyEyeDropper';
+  const PREFIX = 'spongy-app';
   const APP = createDiv(PREFIX);
   let isAppActive = false;
 
-  const ui = createDiv(`${PREFIX}Container`);
-  const loupe = createLoupe(PREFIX, SIZE);
+  const ui = createDiv(`${PREFIX}-container`);
+  const loupe = createLoupe(SIZE, PREFIX);
   const colorBox = createColorBox(PREFIX);
   const screenshot = createScreenshot(PREFIX);
 
@@ -100,7 +100,7 @@ function App(options = {}) {
     window.addEventListener('resize', refresh);
 
     isAppActive = true;
-    appendChildren(ui, loupe.container, colorBox.container);
+    appendChildren(ui, loupe.element, colorBox.element);
     appendChildren(APP, ui);
     appendUI();
   }

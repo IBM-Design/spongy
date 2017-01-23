@@ -9,7 +9,7 @@
  */
  function createElement(tagName ='div', id = '', ...classNames) {
   const element = document.createElement(tagName);
-  element.id = id;
+  element.id = id || '';
   element.classList.add(...classNames);
 
   return element;
@@ -26,6 +26,19 @@
  */
 function createDiv(id = '', ...classNames) {
   return createElement('div', id, ...classNames);
+}
+
+
+/**
+ * Create a P HTML element.
+ *
+ * @param {string} id The ID to be applied to the P.
+ * @param {...string} classNames The class names to be applied to the P.
+ * @returns {HTMLElement} The newly created P.
+ * @public
+ */
+function createParagraph(id = '', ...classNames) {
+  return createElement('p', id, ...classNames);
 }
 
 
@@ -74,6 +87,7 @@ function appendChildren(container, ...children) {
 export {
   createElement,
   createDiv,
+  createParagraph,
   createSpan,
   createTextInput,
   appendChildren,

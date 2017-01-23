@@ -44,7 +44,7 @@ describe('utils.color', () => {
   });
 
   describe('#normalizeHexString', () => {
-    const expectedString = '#FFFFFF';
+    const expectedString = '#ffffff';
 
     // Test string doubling
     it('"#FFF" should return #FFFFFF', () => {
@@ -182,10 +182,10 @@ describe('utils.color', () => {
     // Test matching colors
     it('should return confident brand color', () => {
       let color = getMatchingBrandColor([253, 214, 0], confidenceThreshold, brandColors);
-      assert.deepEqual(color, { grade: 10, name: 'yellow', hex: '#FED500', rgb: [254, 213, 0] });
+      assert.deepEqual(color, { grade: 10, name: 'yellow', hex: '#fed500', rgb: [254, 213, 0] });
 
       color = getMatchingBrandColor([240, 86, 165], confidenceThreshold, brandColors);
-      assert.deepEqual(color, { grade: 40, name: 'magenta', hex: '#FF509E', rgb: [255, 80, 158] });
+      assert.deepEqual(color, { grade: 40, name: 'magenta', hex: '#ff509e', rgb: [255, 80, 158] });
     });
 
     // Test non-matching color
