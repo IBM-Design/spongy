@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  position: static;
+
+  text-align: left;
+  line-height: 1;
+
+  background: transparent;
+
+  &::before,
+  &::after {
+    display: none;
+    margin: 0;
+    padding: 0;
+  }
+}

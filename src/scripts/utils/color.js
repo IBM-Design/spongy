@@ -122,7 +122,7 @@ function normalizeHexString(hexString) {
     result = `#${result[1]}${result[1]}${result[2]}${result[2]}${result[3]}${result[3]}`
   }
 
-  return result.substr(0, 7).toUpperCase();
+  return result.substr(0, 7).toLowerCase();
 }
 
 
@@ -219,8 +219,8 @@ function colorContrast(colorOne, colorTwo) {
  * @param {string} hexBackgroundColor Background color value in hexadecimal format.
  * @public
  */
-function getVisibleTextColor(hexBackgroundColor) {
-  return colorContrast(hexBackgroundColor, '#FFFFFF') > 3 ? '#FFFFFF' : '#000000';
+function getVisibleTextColor(hexBackgroundColor, hexTextColor = '#000000') {
+  return colorContrast(hexBackgroundColor, hexTextColor) > 3 ? hexTextColor : '#FFFFFF';
 }
 
 

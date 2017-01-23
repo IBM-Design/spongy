@@ -1,6 +1,6 @@
 {
   "name": "spongy",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Google Chrome color picker for brand colors and grades",
   "main": "index.js",
   "scripts": {

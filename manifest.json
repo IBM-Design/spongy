@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Spongy",
   "author": "Diego Hernandez",
-  "version": "0.0.3",
+  "version": "0.0.5",
 
   "description": "Google Chrome color picker for brand colors and grades",
 
@@ -15,7 +15,10 @@
     "default_title": "Spongy: Check for brand colors",
     "default_popup": "dist/html/popup.html"
   },
-  "permissions": ["activeTab"],
+  "permissions": [
+    "activeTab",
+    "<all_urls>"
+  ],
 
   "background": {
     "scripts" : ["dist/scripts/background.js"],
@@ -32,6 +35,9 @@
     "matches": ["http://*/*", "https://*/*"],
     "js": ["dist/scripts/main.js"],
     "css": ["dist/styles/main.css"]
-  }]
+  }],
 
+  "web_accessible_resources": [
+    "fonts/*"
+  ]
 }

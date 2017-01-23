@@ -1,0 +1,31 @@
+$font-family: 'HelvIBM', helvetica, arial, sans-serif;
+$dir: 'chrome-extension://__MSG_@@extension_id__/fonts';
+
+$fonts: (
+  (
+    'filename': 'HelvNeueRomanforIBM',
+    'weight': 400,
+  ),
+  (
+    'filename': 'HelvNeueBoldforIBM',
+    'weight': 700,
+  ),
+);
+
+@each $font in $fonts {
+ @font-face {
+   $location: '#{$dir}/#{map-get($font, 'filename')}';
+   $name: 'HelvIBM';
+
+   font-family: $name;
+   font-weight: map-get($font, 'weight');
+
+   src: url('#{$location}.eot');
+   src:
+     url('#{$location}.eot?#iefix') format('embedded-opentype'),
+     url('#{$location}.woff') format('woff'),
+     url('#{$location}.woff2') format('woff2'),
+     url('#{$location}.ttf') format('truetype'),
+     url('#{location}.svg##{$name}') format('svg');
+ }
+}

@@ -4,19 +4,20 @@ import {rgbColorStringToArray} from '../utils/color';
 /**
  * Create Loupe element.
  *
- * @param {string} prefix The prefix than can be applied to the ID of the Loupe to namespace it.
  * @param {number} size The size of the Loupe in how many vertical and horizontal pixels it will have.
+ * @param {string} prefix Namespaced prefix for element ids.
  * @public
  */
-function createLoupe(prefix = '', size) {
-  const container = createDiv(`${prefix}Loupe`);
-  const pixels = createPixelsArray(prefix, size);
+function createLoupe(size, prefix = '') {
+  const id = `${prefix}-loupe`;
+  const element = createDiv(id);
+  const pixels = createPixelsArray(id, size);
   const middlePixel = pixels[getMiddlePixelIndex(size)];
 
-  appendChildren(container, ...pixels);
+  appendChildren(element, ...pixels);
 
   return {
-    container,
+    element,
     pixels,
     middlePixel,
   };
@@ -35,9 +36,10 @@ function createPixelsArray(prefix, size) {
   const middlePixelIndex = getMiddlePixelIndex(size);
 
   for (let pixelIndex = 0; pixelIndex < (Math.pow(size, 2)); pixelIndex++) {
-    const pixelClassNames = [`${prefix}Pixel`];
+    const className = `${prefix}__pixel`;
+    const pixelClassNames = [className];
     if (pixelIndex === middlePixelIndex) {
-      pixelClassNames.push('middle');
+      pixelClassNames.push(`${className}--middle`);
     }
 
     const pixel = createDiv(null, ...pixelClassNames);
