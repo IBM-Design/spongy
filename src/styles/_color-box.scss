@@ -1,5 +1,6 @@
 &-color-box {
   $color-box: &;
+  display: none;
   margin-left: -$loupe-size / 2;
   min-height: 3em;
   min-width: 8em;
@@ -13,6 +14,7 @@
   line-height: 1.2;
 
   &.active {
+    display: block;
     padding: 1em;
 
     #{$color-box}__container {
