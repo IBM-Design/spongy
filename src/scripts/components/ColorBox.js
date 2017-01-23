@@ -57,8 +57,8 @@ function updateColorBoxText(colorBox, hexColor, brandColor) {
   const noMatch = 'No match';
 
   const brandText = brandColor ? `'${brandColor.name}', ${brandColor.grade}` : noMatch;
-  const rgbText = hexColor ? `RGB ${hexColorToRgb(hexColor).join(', ')}` : '';
-  const hexText = hexColor ? `HEX ${normalizeHexString(hexColor)}` : '';
+  const rgbText = `RGB ${brandColor ? brandColor.rgb.join(', ') : hexColorToRgb(hexColor).join(', ')}`;
+  const hexText = `HEX ${normalizeHexString(brandColor ? brandColor.hex : hexColor)}`;
 
   rgb.textContent = rgbText;
   hex.textContent = hexText;
