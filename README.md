@@ -1,14 +1,24 @@
 # Spongy
 
-> A Google Chrome extension eye dropper tool for any set of brand colors.
+> A Google Chrome eyedropper for IBM Design Language's colors and grades.
 
 ![Spongy in action](/spongy.gif?raw=true)
 
-If you're someone who works with brand colors often, you might have a hex to brand color and grade cheatsheet with you at all times. That way when you're working with a design where all you get is hex values, you can determine which Sass mixin you need to get that same color.
+If you're someone who works with brand colors often, you might have a hex to brand color and grade cheatsheet with you at all times. That way when you're working with a design where all you get is hex values, you can determine which Sass or JS value you need to get that same color.
 
 Worry not! This tool will help get your brand specific color information from any website, image, or app in Google Chrome.
 
-## How to get Spongy
+This extension was originally made for the colors and grades of IBM Design Language, but we have future dreams:
+
+- [Plug-n-Play your brand's palette](https://github.com/IBM-Design/spongy/issues/8)
+- [Support operating systems instead of browsers](https://github.com/IBM-Design/spongy/issues/9)
+- [Add a keyboard shortcut](https://github.com/IBM-Design/spongy/issues/6)
+
+Can you help?
+
+## [Download from the Chrome Web Store](https://chrome.google.com/webstore/detail/aegfmkbdeejghbcidnjmljmjegidflfg)
+
+## How to test unreleased versions
 This tool is still in testing stages and is not yet ready for the Google Chrome Store and it only works with IBM Design colors. However, it doesn't mean you can't get your hands on it and use it. In fact, please do so this tool can evolve quicker and better!
 
 Here is how to add this extension to your Google Chrome browser:
