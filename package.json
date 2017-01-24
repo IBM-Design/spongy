@@ -1,7 +1,7 @@
 {
   "name": "spongy",
   "version": "1.0.0",
-  "description": "Google Chrome color picker for brand colors and grades",
+  "description": "A Google Chrome eyedropper for IBM Design Language's colors and grades.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",
