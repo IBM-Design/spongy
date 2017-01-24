@@ -13,7 +13,7 @@ This tool is still in testing stages and is not yet ready for the Google Chrome 
 
 Here is how to add this extension to your Google Chrome browser:
 
-1. Download the [spongy.crx](https://github.com/IBM-Design/spongy/blob/master/spongy.crx?raw=true) file.
+1. Download the [dist.crx](/dist.crx?raw=true) file.
 
 2. Once downloaded, go to your extensions panel: `chrome://extensions/`.
 
