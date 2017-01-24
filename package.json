@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",
     "start": "gulp",
-    "build": "gulp build && zip -r spongy.zip . -x \".*\" -x \"*/.*\""
+    "build": "gulp build && zip -r spongy.zip ./dist -x \".*\""
   },
   "repository": {
     "type": "git",
