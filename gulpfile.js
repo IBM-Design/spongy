@@ -8,20 +8,22 @@ const webpackConfig = require('./webpack.config.js');
 
 const paths = {
   src: {
-    dir: path.join(__dirname, 'src'),
+    dir: './src'
   },
   dist: {
-    dir: path.join(__dirname, 'dist')
+    dir: './dist'
   },
 }
 
 // Source paths
+paths.src.fonts = path.join(paths.src.dir, 'fonts');
 paths.src.html = path.join(paths.src.dir, 'html');
 paths.src.imgs = path.join(paths.src.dir, 'imgs');
 paths.src.scripts = path.join(paths.src.dir, 'scripts');
 paths.src.styles = path.join(paths.src.dir, 'styles');
 
 // Distribution paths
+paths.dist.fonts = path.join(paths.dist.dir, 'fonts');
 paths.dist.html = path.join(paths.dist.dir, 'html');
 paths.dist.imgs = path.join(paths.dist.dir, 'imgs');
 paths.dist.scripts = path.join(paths.dist.dir, 'scripts');
@@ -50,9 +52,21 @@ gulp.task('icons', () => {
   })
 });
 
+// Manifest build task
+gulp.task('manifest', () => {
+  return gulp.src('./manifest.json')
+    .pipe(gulp.dest(paths.dist.dir));
+});
+
+// Manifest build task
+gulp.task('fonts', () => {
+  return gulp.src(`${paths.src.fonts}/*`)
+    .pipe(gulp.dest(paths.dist.fonts));
+});
+
 // Javascript build task
 gulp.task('scripts', () => {
-  return gulp.src([`${paths.src.scripts}/*.js`])
+  return gulp.src(`${paths.src.scripts}/*.js`)
     .pipe(webpack(webpackConfig))
     .pipe(gulp.dest(paths.dist.scripts));
 });
@@ -64,11 +78,13 @@ gulp.task('styles', () => {
     .pipe(gulp.dest(paths.dist.styles));
 });
 
-gulp.task('build', ['html', 'icons', 'scripts', 'styles']);
+gulp.task('build', ['html', 'icons', 'manifest', 'fonts', 'scripts', 'styles']);
 
 gulp.task('default', ['build'], () => {
   gulp.watch(`${paths.src.html}/**/*.html`, ['html']);
   gulp.watch(`${paths.src.imgs}/icon.svg`, ['icons']);
+  gulp.watch('./manifest.json', ['manifest']);
+  gulp.watch(`${paths.src.fonts}/*`, ['fonts']);
   gulp.watch(`${paths.src.scripts}/**/*.js`, ['scripts']);
   gulp.watch(`${paths.src.styles}/**/*.scss`, ['styles']);
 });
