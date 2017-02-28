@@ -9,6 +9,7 @@
   @import 'loupe';
   @import 'color-box';
 
+  display: none;
   height: 100%;
   width: 100%;
 
@@ -22,4 +23,8 @@
   text-align: left;
 
   cursor: crosshair;
+
+  &.active {
+    display: block;
+  }
 }

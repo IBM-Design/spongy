@@ -4,12 +4,17 @@ import { createColorBox, updateColorBox } from './ColorBox';
 import { createScreenshot, updateScreenshot, getColorData } from './Screenshot';
 import { createDiv, appendChildren } from '../utils/dom';
 import { addBrandColorsToArray } from '../utils/color';
-import { requestScreenshot, processExtensionMessage } from '../utils/chrome';
-import PLATFORMS from '../constants/platforms';
+import MESSAGE_TYPES from '../constants/message_types';
 
 function App(options = {}) {
-  const SIZE = 5;
   const PREFIX = 'spongy-app';
+
+  // If spongy already exists on tab, then don't add again.
+  if (document.getElementById(PREFIX)) {
+    return false;
+  }
+
+  const SIZE = 5;
   const APP = createDiv(PREFIX);
   let isAppActive = false;
 
@@ -24,26 +29,48 @@ function App(options = {}) {
     configure(options.colors);
   }
 
-  let requestScreenshotFunc;
+  appendChildren(ui, loupe.element, colorBox.element);
+  appendChildren(APP, ui);
+  document.body.appendChild(APP);
 
-  if (options.platform) {
-    switch (options.platform) {
-      case PLATFORMS.CHROME:
-      default: {
-        setDefault();
-      }
-    }
-  } else {
-    setDefault();
-  }
+  chrome.runtime.onMessage.addListener(processExtensionMessage);
+  requestScreenshot();
+
 
   /**
-   * Set default screenshot request and processing functions to Chrome.
+   * Request screenshot data.
    */
-  function setDefault() {
-    requestScreenshotFunc = requestScreenshot;
-    chrome.runtime.onMessage.addListener(processExtensionMessage(getScreenshotData));
+  function requestScreenshot() {
+    chrome.runtime.sendMessage({type: MESSAGE_TYPES.SCREENSHOT_REQUEST});
   }
+
+
+  /**
+   * Handle messages from extension.
+   *
+   * @param {function} callback Function to call when screenshot data is ready.
+   * @callback
+   */
+  function processExtensionMessage(message) {
+    switch (message.type) {
+      case MESSAGE_TYPES.SCREENSHOT_DATA: {
+        updateScreenshot(screenshot, message.data);
+
+        // If no brand colors were configured, add in IBM Design Colors.
+        if (brandColors.length === 0) {
+          configure(IBMColors.palettes);
+        }
+        if (!isAppActive) {
+          activate();
+        }
+        break;
+      }
+      default: {
+        console.error('[SPONGY] Extention message not recognized', request);
+      }
+    }
+  }
+
 
   /**
    * Function to configure brand color data of App.
@@ -59,33 +86,13 @@ function App(options = {}) {
     addBrandColorsToArray(brandColors, data);
   }
 
-  /**
-   * Handle getting screenshot data.
-   *
-   * @param {string} screenshotData Raw screenshot image data.
-   * @callback
-   */
-  function getScreenshotData(screenshotData) {
-    updateScreenshot(screenshot, screenshotData);
-
-    // If no brand colors were configured, add in IBM Design Colors.
-    if (brandColors.length === 0) {
-      configure(IBMColors.palettes);
-    }
-
-    if (!isAppActive) {
-      activate();
-    }
-  }
 
   /**
    * Request extension to send new screenshot data.
-   *
-   * @callback
    */
   function refresh() {
-    removeUI();
-    requestScreenshotFunc(appendUI);
+    deactivate();
+    requestScreenshot();
   }
 
 
@@ -100,9 +107,7 @@ function App(options = {}) {
     window.addEventListener('resize', refresh);
 
     isAppActive = true;
-    appendChildren(ui, loupe.element, colorBox.element);
-    appendChildren(APP, ui);
-    appendUI();
+    APP.classList.add('active');
   }
 
 
@@ -117,25 +122,7 @@ function App(options = {}) {
     window.removeEventListener('resize', refresh);
 
     isAppActive = false;
-    removeUI();
-  }
-
-
-  /**
-   * Append main App element from document body.
-   */
-  function appendUI() {
-    document.body.appendChild(APP);
-  }
-
-
-  /**
-   * Remove main App element from document body.
-   */
-  function removeUI() {
-    if (document.getElementById(PREFIX)) {
-      document.body.removeChild(APP);
-    }
+    APP.classList.remove('active');
   }
 
 
@@ -215,9 +202,7 @@ function App(options = {}) {
     }
   }
 
-  return {
-    configure,
-  };
+  return true;
 }
 
 export default App;

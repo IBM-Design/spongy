@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Spongy",
   "author": "Diego Hernandez",
-  "version": "1.0.0",
+  "version": "1.0.1",
 
   "description": "A Google Chrome eyedropper for IBM Design Language's colors and grades.",
 
@@ -30,12 +30,6 @@
     "48": "imgs/icon_48.png",
     "128": "imgs/icon_128.png"
   },
-
-  "content_scripts": [{
-    "matches": ["http://*/*", "https://*/*"],
-    "js": ["scripts/main.js"],
-    "css": ["styles/main.css"]
-  }],
 
   "web_accessible_resources": [
     "fonts/*"

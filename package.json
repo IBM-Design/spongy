@@ -1,6 +1,6 @@
 {
   "name": "spongy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Google Chrome eyedropper for IBM Design Language's colors and grades.",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,6 @@
     "url": "https://github.com/IBM-Design/spongy/issues"
   },
   "dependencies": {
-    "d3-color": "^1.0.2",
     "ibm-design-colors": "^2.0.3"
   },
   "devDependencies": {
