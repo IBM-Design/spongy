@@ -1,4 +1,3 @@
-import * as d3 from 'd3-color';
 import { roundToDecimal } from './math';
 /**
  * Turn a hexadecimal color value into an array of red, green, blue values in base 10.

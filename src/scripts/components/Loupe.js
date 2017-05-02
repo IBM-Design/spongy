@@ -66,7 +66,7 @@ function getMiddlePixelIndex(size) {
  * Color all of the pixels inside the Loupe.
  *
  * @param {object} loupe Loupe elements object.
- * @param {number[]} colorData Array of RGBA values for an area the size of the Loupe.
+ * @param {Uint8ClampedArray} colorData Array of RGBA values for an area the size of the Loupe.
  * @public
  */
 function updateLoupePixelColors(loupe, colorData) {

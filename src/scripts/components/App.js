@@ -1,22 +1,21 @@
 import * as IBMColors from '../../../node_modules/ibm-design-colors/source/colors';
+import { debounce } from 'lodash';
 import { createLoupe, updateLoupePixelColors, getMiddlePixelColor } from './Loupe';
 import { createColorBox, updateColorBox } from './ColorBox';
 import { createScreenshot, updateScreenshot, getColorData } from './Screenshot';
-import { createDiv, appendChildren } from '../utils/dom';
+import { createElement, createDiv, appendChildren } from '../utils/dom';
 import { addBrandColorsToArray } from '../utils/color';
-import { requestScreenshot, processExtensionMessage } from '../utils/chrome';
-import PLATFORMS from '../constants/platforms';
+import { requestScreenshot, processExtensionMessage, requestStopApp } from '../utils/chrome';
+import MessageType from '../constants/MessageType';
+import KeyCode from '../constants/KeyCode';
 
 function App(options = {}) {
   const SIZE = 5;
   const PREFIX = 'spongy-app';
   const APP = createDiv(PREFIX);
-  let isAppActive = false;
 
-  const ui = createDiv(`${PREFIX}-container`);
-  const loupe = createLoupe(SIZE, PREFIX);
-  const colorBox = createColorBox(PREFIX);
-  const screenshot = createScreenshot(PREFIX);
+  loadStyles();
+  requestScreenshot();
 
   // Set brand colors
   let brandColors = [];
@@ -24,26 +23,20 @@ function App(options = {}) {
     configure(options.colors);
   }
 
-  let requestScreenshotFunc;
+  chrome.runtime.onMessage.addListener(processExtensionMessage(MessageType.SCREENSHOT_DATA, getScreenshotData));
+  chrome.runtime.onMessage.addListener(processExtensionMessage(MessageType.STOP_APP, deactivate));
 
-  if (options.platform) {
-    switch (options.platform) {
-      case PLATFORMS.CHROME:
-      default: {
-        setDefault();
-      }
-    }
-  } else {
-    setDefault();
-  }
+  const ui = createDiv(`${PREFIX}-container`);
+  const loupe = createLoupe(SIZE, PREFIX);
+  const colorBox = createColorBox(PREFIX);
+  const screenshot = createScreenshot(PREFIX);
 
   /**
-   * Set default screenshot request and processing functions to Chrome.
+   * De-bounce refresh function so that it can be added and removed as event listener handlers.
+   *
+   * @type {function}
    */
-  function setDefault() {
-    requestScreenshotFunc = requestScreenshot;
-    chrome.runtime.onMessage.addListener(processExtensionMessage(getScreenshotData));
-  }
+  const deBounceRefresh = debounce(refresh, 50);
 
   /**
    * Function to configure brand color data of App.
@@ -60,6 +53,26 @@ function App(options = {}) {
   }
 
   /**
+   * Load styles on to current page.
+   */
+  function loadStyles() {
+    const stylesUrl = chrome.extension.getURL('/styles/main.css');
+    const exitingStyles = document.querySelectorAll(`[href='${stylesUrl}'`);
+
+    // Check if there are already existing links that point to the styles URL. If there is none, load the styles.
+    if (exitingStyles.length === 0) {
+      // Create link element
+      const styles = createElement('link');
+      styles.href = stylesUrl;
+      styles.rel = 'stylesheet';
+
+      // Append link to head.
+      const head = document.querySelector('head');
+      head.appendChild(styles);
+    }
+  }
+
+  /**
    * Handle getting screenshot data.
    *
    * @param {string} screenshotData Raw screenshot image data.
@@ -73,19 +86,17 @@ function App(options = {}) {
       configure(IBMColors.palettes);
     }
 
-    if (!isAppActive) {
-      activate();
-    }
+    activate();
   }
 
   /**
-   * Request extension to send new screenshot data.
+   * Request extension to send new screen shot data.
    *
    * @callback
    */
   function refresh() {
     removeUI();
-    requestScreenshotFunc(appendUI);
+    setTimeout(requestScreenshot, 0);
   }
 
 
@@ -93,16 +104,15 @@ function App(options = {}) {
    * Activate application by adding event listeners and showing the UI.
    */
   function activate() {
-    document.addEventListener('mousemove', move);
-    document.addEventListener('click', readColor);
-    document.addEventListener('keyup', handleKeyCommand);
-    document.addEventListener('scroll', refresh);
-    window.addEventListener('resize', refresh);
+    if (!document.body.contains(document.getElementById(PREFIX))) {
+      document.addEventListener('mousemove', move);
+      document.addEventListener('click', readColor);
+      document.addEventListener('keyup', handleKeyCommand);
+      document.addEventListener('scroll', deBounceRefresh);
+      window.addEventListener('resize', deBounceRefresh);
 
-    isAppActive = true;
-    appendChildren(ui, loupe.element, colorBox.element);
-    appendChildren(APP, ui);
-    appendUI();
+      appendUI();
+    }
   }
 
 
@@ -113,10 +123,9 @@ function App(options = {}) {
     document.removeEventListener('mousemove', move);
     document.removeEventListener('click', readColor);
     document.removeEventListener('keyup', handleKeyCommand);
-    document.removeEventListener('scroll', refresh);
-    window.removeEventListener('resize', refresh);
+    document.removeEventListener('scroll', deBounceRefresh);
+    window.removeEventListener('resize', deBounceRefresh);
 
-    isAppActive = false;
     removeUI();
   }
 
@@ -125,6 +134,8 @@ function App(options = {}) {
    * Append main App element from document body.
    */
   function appendUI() {
+    appendChildren(ui, loupe.element, colorBox.element);
+    appendChildren(APP, ui);
     document.body.appendChild(APP);
   }
 
@@ -133,7 +144,7 @@ function App(options = {}) {
    * Remove main App element from document body.
    */
   function removeUI() {
-    if (document.getElementById(PREFIX)) {
+    if (document.body.contains(APP)) {
       document.body.removeChild(APP);
     }
   }
@@ -156,7 +167,7 @@ function App(options = {}) {
     const x = pageX - scrollLeft;
     const y = pageY - scrollTop;
 
-    // Get color data from document Screenshot area based on x and y coordinates.
+    // Get color data from document Screen shot area based on x and y coordinates.
     const colorData = getColorData(screenshot, x, y, SIZE);
 
     // Get height and width of main UI ui.
@@ -201,13 +212,12 @@ function App(options = {}) {
     event.preventDefault();
 
     switch (keyCode) {
-      // Deactivate extension with <esc> key
-      case 27: {
-        deactivate();
+      case KeyCode.ESC: {
+        requestStopApp();
         break;
       }
-      // Reload extension with <R> key
-      case 82: {
+
+      case KeyCode.R: {
         refresh();
         break;
       }

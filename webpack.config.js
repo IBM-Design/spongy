@@ -4,6 +4,7 @@ const src = path.join(__dirname, 'src/scripts');
 const dist = path.join(__dirname, 'dist/scripts');
 
 module.exports = {
+  devtool: 'source-map',
   entry: {
     main: path.join(src, 'main.js'),
     popup: path.join(src, 'popup.js'),

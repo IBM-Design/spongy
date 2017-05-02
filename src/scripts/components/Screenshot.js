@@ -37,7 +37,6 @@ function width() {
   return window.innerWidth * window.devicePixelRatio;
 };
 
-
 /**
  * Update the canvas and the image the screenshot represents.
  *
@@ -54,7 +53,9 @@ function updateScreenshot(screenshot, imageData) {
   element.width = width();
   image.src = imageData;
 
-  context.drawImage(image, 0, 0);
+  image.addEventListener('load', () => {
+    context.drawImage(image, 0, 0);
+  });
 }
 
 
