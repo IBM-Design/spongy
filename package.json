@@ -2,7 +2,7 @@
   "name": "spongy",
   "version": "1.0.1",
   "description": "A Google Chrome eyedropper for IBM Design Language's colors and grades.",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",
