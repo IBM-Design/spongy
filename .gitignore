@@ -5,3 +5,4 @@ npm-debug.log
 *.zip
 *.pem
 .DS_Store
+.idea
